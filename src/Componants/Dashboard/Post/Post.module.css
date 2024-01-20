@@ -1,0 +1,64 @@
+.card {
+    scale: .92;
+    border: 1px solid #0000002c;
+    border-radius: 20px !important;
+    width: 63%;
+    max-height: none;
+    margin-bottom: 10px;
+}
+
+.content {
+    text-align: left !important;
+    width: 50% ;
+    margin-left: 5px;
+}
+
+.slid {
+    border-radius: 40px !important;
+}
+
+.Title {
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.title {
+    font-size: 16px;
+    width: 180px;
+    font-weight: 600;
+}
+
+.info {
+    width: 220px;
+    margin-left: 10px;
+    font-size: 15px;
+}
+
+.img {
+    border-radius: 30px !important;
+    min-width: 70%;
+    min-height: 90%;
+    max-width: 90%;
+}
+
+.action .action1 {
+    transition: all .2s;
+}
+
+.action .action1:hover {
+
+    background-color: #0d0d0d19;
+
+}
+
+.comment {
+    border-radius: 10px !important;
+}
+
+.commentcontent {
+    padding: 5px;
+    border-radius: 15px;
+    background-color: #0d0d0d19;
+
+}
+

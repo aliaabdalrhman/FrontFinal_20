@@ -1,0 +1,23 @@
+.btn {
+    background-color: gray !important;
+   padding: 10px 15px !important;
+}
+
+.accordion {
+    border-radius: 10px !important;
+    border: 1px solid #1976D2;
+}
+
+.title {
+    font-weight: 500;
+    font-size: 19px;
+    width: 140px;
+}
+
+.info {
+    width: auto;
+    margin-left: 3px;
+    font-size: 15px;
+    text-align: center;
+    margin-top: 6px;
+}

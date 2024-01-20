@@ -1,0 +1,61 @@
+
+.TextField {
+    width: 430px;
+    border: 1px solid #156ac0 !important;
+    border-radius: 30px;
+}
+
+
+.signinbtn {
+    width: 130px;
+    border-radius: 20px !important;
+}
+.form1{
+    border-right: 1px solid #156ac0;
+    padding-right: 50px;
+}
+.title{
+  
+    margin-top: 40px;
+    
+}
+.send {
+    width: 170px;
+    border: 1px solid #ffffffdf !important;
+    border-radius: 20px !important;
+    margin-top: 32px;
+}
+.send1 {
+    width: 170px;
+    border: 1px solid #ffffffdf !important;
+    border-radius: 20px !important;
+    margin-top: 20px;
+}
+.drop{
+    border-radius: 30px !important;
+    width: 430px;
+    height: 48px;
+    border-color: #156ac0;
+}
+.upload{
+    border-radius: 30px !important;
+    width: 100 ;
+    height: 40px;
+    border-color: #156ac0;
+    margin-top: 5px;
+}
+.check{
+    margin-left: 33.5px;
+}
+.inputText{
+    border-radius: 20px ;
+    border-color: #156ac0;
+    
+}
+.desc{
+    margin: 29px 0;
+}
+.input {
+    margin-bottom: 27px ;
+}
+

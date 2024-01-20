@@ -1,0 +1,110 @@
+body {
+    background-color: #6897c60c;
+}
+
+.signin {
+    background-color: #fff;
+    width: 65%;
+    scale: .85;
+    height: 700px;
+    box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    border: 1px solid #156ac0;
+
+}
+
+.icons i {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-left: 15px;
+    text-align: center;
+    line-height: 30px;
+    border: 1px solid;
+    transition: .3s;
+}
+
+.icons i:hover {
+    /* transform: rotate(360deg); */
+    cursor: pointer;
+}
+
+.icons i:nth-of-type(1) {
+    color: #dd4b39;
+    border-color: #dd4b39;
+}
+
+.icons i:nth-of-type(1):hover {
+    background-color: #dd4b39;
+    color: #fff;
+}
+
+.icons i:nth-of-type(2) {
+    color: #3b5999;
+    border-color: #3b5999;
+}
+
+.icons i:nth-of-type(2):hover {
+    background-color: #3b5999;
+    color: #fff;
+}
+
+.TextField {
+    width: 420px;
+    border: 1px solid #156ac0 !important;
+    border-radius: 40px;
+}
+
+.divider {
+    width: 390px;
+    background-color: #156ac0;
+}
+
+.asideL {
+    width: 60%;
+}
+
+.asideR {
+    color: white;
+    background: linear-gradient(to right, #347ac0, #04417e);
+    /* background-color: #0c3d70; */
+    width: 40%;
+    text-align: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.signinbtn {
+    width: 130px;
+    border-radius: 20px !important;
+}
+
+.signupbtn {
+    width: 130px;
+    border: 1px solid #ffffffdf !important;
+    border-radius: 20px !important;
+}
+
+
+.input {
+    margin-bottom: 29px;
+}
+
+.forgot {
+    position: relative;
+}
+
+.forgot::after {
+    content: " ";
+    position: absolute;
+    width: 0;
+    background-color: #156ac0;
+    height: 2px;
+    bottom: -9px;
+    left: 0;
+}
+
+.forgot:hover::after {
+    width: 100%;
+    transition: .7s;
+}

@@ -1,0 +1,22 @@
+.logout {
+    margin-top: 320px;
+}
+
+.listItem {
+    transition: all .25s;
+}
+
+.listItem:hover {
+    background-color: #156ac018;
+}
+
+.selectedItem {
+    background-color: #156ac018;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+}
+
+.selectedItem i {
+    font-size: 23px !important;
+}

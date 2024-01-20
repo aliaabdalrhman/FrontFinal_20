@@ -1,0 +1,33 @@
+.TextField1{
+    width: 420px;
+    border: 1px solid #156ac0 !important;
+    border-radius: 30px;
+}
+.TextArea{
+    border: 1px solid #156ac0 !important;
+    border-radius: 20px;
+}
+.btn{
+    width:130px;
+}
+.input {
+    margin-bottom: 28px;
+}
+.forgot {
+    position: relative;
+}
+
+.forgot::after {
+    content: " ";
+    position: absolute;
+    width: 0;
+    background-color: #156ac0;
+    height: 2px;
+    bottom: -9px;
+    left: 0;
+}
+
+.forgot:hover::after {
+    width: 100%;
+    transition: .5s;
+}

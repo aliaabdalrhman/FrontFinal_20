@@ -1,0 +1,13 @@
+.navbar{
+    /* background-color: #156ac0 !important; */
+    background: linear-gradient(to top,#347ac0, #0e68c2);
+  
+
+}
+.Logo{
+    margin-left: 50px;
+    
+}
+.navbar-nav .nav-item .nav-link{
+    color: #fff;
+}
