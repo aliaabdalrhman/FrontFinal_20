@@ -1,21 +1,51 @@
 import { Box, Toolbar } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Post from '../Post/Post.jsx'
-import CreatePost from '../CreatePost/CreatePost'
+// import CreatePost from '../CreatePost/CreatePost'
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import CreatePost from '../CreatePost/CreatePost.jsx';
 
 export default function Community() {
- 
+
+  let { _id } = useParams();
+  let [community, setCommunity] = useState({});
+  let [communityname, setCommunityname] = useState('');
+  // let [properities, setProperities] = useState([]);
+
+  async function getcommunityDetails() {
+    try {
+      let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${_id}`);
+      console.log(data)
+      setCommunity(data.Community)
+      setCommunityname(data.Community.community_name)
+    }
+    catch (error) {
+      console.log('error:', error)
+    }
+  }
+
+  // async function getPropereties(communityname) {
+  //   try {
+  //     let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${communityname}/viewProperty`);
+  //     console.log(data);
+  //     setProperities(data);
+  //   }
+  //   catch (error) {
+  //     console.log('error:', error);
+  //   }
+  // }
+  useEffect(() => {
+    getcommunityDetails();
+    // getPropereties(communityname);
+
+  }, [])
   return (
     <div className="sid">
-      <Box component="main" sx={{ flexGrow: 1,pt:2 }}>
+      <Box component="main" sx={{ flexGrow: 1, pt: 2 }}>
         <Toolbar />
-        <CreatePost/>
-        <Post/>
-        <Post/>
-        <Post/>
-        <Post/>
-        <Post/>
-        <Post/>
+        <CreatePost />
+        <Post communityname={communityname} />
       </Box>
     </div>
 

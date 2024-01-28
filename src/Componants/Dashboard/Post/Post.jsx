@@ -1,12 +1,13 @@
 import { Box, CardActions } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from './Post.module.css'
 import { Card, CardContent, Typography, Avatar, Collapse, Button } from '@mui/material';
 import Slider from "react-slick";
 import SendIcon from '@mui/icons-material/Send';
 import { InputText } from "primereact/inputtext";
+import axios from 'axios';
 
-export default function Post() {
+export default function Post({ communityname }) {
 
     const settings = {
         dots: true,
@@ -25,7 +26,7 @@ export default function Post() {
     const [newComment, setNewComment] = useState('');
 
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
- 
+
     const handleToggleComments = () => {
         setIsCommentsOpen(!isCommentsOpen);
     };
@@ -36,10 +37,25 @@ export default function Post() {
             setNewComment('');
         }
     };
+    let [posts, setPosts] = useState([]);
 
-   
+    async function getPosts(communityname) {
+        try {
+            let { data } = await axios.get(`https://abr-dcxu.onrender.com/communities/${communityname}/viewPosts`);
+            console.log(data);
+            setPosts(data);
+        }
+        catch (error) {
+            console.log('error:', error);
+        }
+    }
 
-   
+    useEffect(() => {
+        getPosts(communityname);
+
+    }, [])
+
+
     return (
 
         <Box  >
@@ -167,7 +183,7 @@ export default function Post() {
                     </Collapse>
 
                 </Card>
-               
+
             </Box >
         </Box >
 

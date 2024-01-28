@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
@@ -12,14 +12,9 @@ import style from './Sidebar.module.css';
 
 const drawerWidth = 240;
 
-export default function Sidebar() {
- 
-    let Navigate = useNavigate();
+export default function Sidebar({ logOut }) {
     let location = useLocation();
 
-    const LogOut = () => {
-        Navigate('/signin')
-    }
 
     return (
         <Box sx={{ display: 'flex' }}  >
@@ -36,7 +31,7 @@ export default function Sidebar() {
                 }}
             >
                 <Toolbar />
-                <Box sx={{  height: 642 }}  >
+                <Box sx={{ height: 642 }}  >
                     <List >
                         <ul className="navbar-nav  mb-lg-0">
                             <div className={`list-item ${style.listItem} ${location.pathname === '/communities' ? style.selectedItem : ''} `} >
@@ -50,7 +45,6 @@ export default function Sidebar() {
                             <div className={`list-item ${style.listItem} ${location.pathname === '/myposts' ? style.selectedItem : ''} `}>
                                 <li className="nav-item ms-5 mb-2">
                                     <Link className="nav-link " to="myposts" >
-
                                         <i className="fa-regular fa-file-lines " style={{ width: '35px', color: 'black', fontSize: '20px' }} />
                                         <span>  My Posts </span >
                                     </Link>
@@ -60,7 +54,7 @@ export default function Sidebar() {
                                 <li className="nav-item ms-5 mb-2">
                                     <Link className="nav-link " to='mycomment' >
 
-                                        <i class="fa-regular fa-comment " style={{ width: '35px', color: 'black', fontSize: '20px' }}></i>
+                                        <i className="fa-regular fa-comment " style={{ width: '35px', color: 'black', fontsize: '20px' }} />
                                         <span> My Comments</span>
                                     </Link>
                                 </li>
@@ -69,21 +63,20 @@ export default function Sidebar() {
                                 <li className="nav-item ms-5 mb-2" >
                                     <Link className="nav-link" to="Settings" >
 
-                                        <i class="fa-solid fa-gear" style={{ width: '35px', color: 'black', fontSize: '20px' }}></i>
+                                        <i className="fa-solid fa-gear" style={{ width: '35px', color: 'black', fontsize: '20px' }} />
                                         <span> Settings </span>
                                     </Link>
                                 </li>
                             </div>
-
                         </ul>
                     </List>
                     <ul className={`navbar-nav mb-lg-0 ${style.logout}`}>
                         <Divider className='border mt-5' />
                         <div className={`list-item ${style.listItem} `}>
-                            <li className="nav-item ms-5 mb-2" >
-                                <Link className="nav-link" onClick={LogOut} >
+                            <li className="nav-item ms-5 mb-2" onClick={logOut} >
+                                <Link className="nav-link" >
                                     <span>
-                                        <i class="fa-solid fa-sign-out " style={{ width: '35px', color: 'black', fontSize: '20px' }}></i>
+                                        <i className="fa-solid fa-sign-out " style={{ width: '35px', color: 'black', fontsize: '20px' }} />
                                     </span>Logout
                                 </Link>
                             </li>

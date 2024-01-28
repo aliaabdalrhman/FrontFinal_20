@@ -7,8 +7,7 @@ export default function MyComment() {
         <div className="sid">
             <Box component="main" sx={{ flexGrow: 1 }}>
                 <Toolbar />
-                <Post />
-                <Post />
+               
             </Box>
         </div>
     )

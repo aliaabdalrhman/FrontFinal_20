@@ -1,7 +1,8 @@
-.TextField1{
+.TextField{
     width: 420px;
     border: 1px solid #156ac0 !important;
     border-radius: 30px;
+    padding: 10px;
 }
 .TextArea{
     border: 1px solid #156ac0 !important;

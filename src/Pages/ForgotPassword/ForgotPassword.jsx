@@ -5,12 +5,41 @@ import { Button } from '@mui/material'
 import { InputText } from "primereact/inputtext";
 import style from './ForgotPassword.module.css'
 import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 
 export default function ForgotPassword() {
     let navigate = useNavigate();
-    const GoToNewPass=()=>{
-        navigate('/newpassword')
+    // const GoToNewPass = () => {
+    //     navigate('/newpassword')
+    // }
+    const [msg, setMsg] = useState('')
+    let formik = useFormik({
+        initialValues: {
+            email: '',
+        },
+        onSubmit: sendCode
+    })
+
+    async function sendCode(values) {
+        try {
+            let { data } = await axios.patch('https://abr-dcxu.onrender.com/auth/sendCode', values);
+            // console.log(data);
+            if (data.message == 'Success') {
+                toast.success("Success !");
+                navigate('/newpassword')
+            }
+
+        }
+        catch (err) {
+            toast.error("error !");
+            console.log(err)
+        }
+
     }
+
     return (
         <>
             <div className={`d-flex justify-content-center align-items-center`}>
@@ -19,22 +48,27 @@ export default function ForgotPassword() {
 
                     </Box>
                     <Box className={`d-flex justify-content-center align-items-center ${style.asideL}`} >
-                        <form >
-
+                        <form onSubmit={formik.handleSubmit}>
                             <div className="d-flex justify-content-center ">
                                 <h2 className='mb-3'>Forgot Password</h2>
                             </div>
                             <div className="mb-4 d-flex justify-content-center ">
                                 <p>No Worries, we'll send you reset Instructions.</p>
                             </div>
-
                             <div className="p-float-label mb-4 d-flex justify-content-between">
-                                <InputText id="email" type='email' className={`button ${style.TextField}`} />
+                                <InputText
+                                    id="email"
+                                    type='email'
+                                    name='email'
+                                    className={`button ${style.TextField}`}
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                />
                                 <label htmlFor="email" className='ms-2'>Email</label>
                             </div>
                             <div className="d-flex justify-content-center ">
-                                <Button variant="contained" size='large' onClick={GoToNewPass} className={`button ${style.resetbtn}`} >
-                                    Reset Password
+                                <Button type='submit' variant="contained" size='large' className={`button ${style.resetbtn}`} >
+                                    send code
                                 </Button>
                             </div>
                         </form>

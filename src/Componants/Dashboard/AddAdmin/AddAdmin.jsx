@@ -3,18 +3,23 @@ import style from './AddAdmin.module.css'
 import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
-export default function AddAdmin() {
+export default function AddAdmin({ viewAdmins }) {
   const [open, setOpen] = useState(false);
+  const [communities, setCommunities] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    viewAdmins();
     setOpen(false);
   };
+  
+  let [StatusError, setStatusError] = useState(' ');
 
   let formik = useFormik({
     initialValues: {
@@ -27,22 +32,56 @@ export default function AddAdmin() {
       bithday: '',
       address: ''
     },
-    onSubmit: addadmin ,
+    onSubmit: addadmin,
   })
   async function addadmin(values) {
-    // let { data } = await axios.post('localhost:3000/admins/addAdmin', values)
-    // console.log(data)
-    console.log(values)
+    try {
+      let { data } = await axios.post('https://abr-dcxu.onrender.com/admins/addAdmin', values);
+      if (data === "success") {
+        toast.success('successfully created post', {
+          position: 'top-center',
+          autoClose: true,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: true,
+          theme: 'dark'
+        });
+        formik.resetForm()
+      }
+    }
+    catch (error) {
+      toast.error('Error in Add User !!!', {
+        position: 'top-center',
+        autoClose: true,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: true,
+        theme: 'dark'
+      });
+      setStatusError(error.response.data.msg)
+    }
   }
 
   async function getadmindata() {
-    let { data } = await axios.get('https://abr-dcxu.onrender.com/admins/addAdmin/community')
-    console.log(data)
+    try {
+      let { data } = await axios.get('https://abr-dcxu.onrender.com/admins/addAdmin/community');
+      setCommunities(data);
+
+    } catch (err) {
+      console.log('error')
+    }
+    // let { data } = await axios.get('https://abr-dcxu.onrender.com/admins/addAdmin/community')
+    // setCommunities(data);
   }
 
   useEffect((() => {
-    // getadmindata();
+    getadmindata();
   }), [])
+
   return (
     <>
       <Button variant="contained" className='button mb-3 ms-4 ' onClick={handleClickOpen}>
@@ -54,7 +93,7 @@ export default function AddAdmin() {
             Add new Admin
           </div>
           <div className=' d-flex justify-content-center align-items-center ms-auto' onClick={handleClose}>
-            <i class="fa-solid fa-xmark ms-auto" style={{ cursor: 'pointer' }}></i>
+            <i className="fa-solid fa-xmark ms-auto" style={{ cursor: 'pointer' }} />
           </div>
         </DialogTitle>
         <DialogContent style={{ overflow: 'hidden' }}>
@@ -70,6 +109,7 @@ export default function AddAdmin() {
                   className='w-75'
                   value={formik.values.first_name}
                   onChange={formik.handleChange}
+                  required
                 />
               </div>
               <div className="d-flex mb-4">
@@ -80,7 +120,8 @@ export default function AddAdmin() {
                   type='text'
                   className='w-75'
                   value={formik.values.last_name}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange}
+                  required />
               </div>
               <div className="d-flex mb-4">
                 <label htmlFor="email" className="label w-25 mt-1">Email :</label>
@@ -90,7 +131,8 @@ export default function AddAdmin() {
                   type='email'
                   className='w-75'
                   value={formik.values.email}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange}
+                  required />
               </div>
               <div className="d-flex mb-4">
                 <label htmlFor="password" className="label w-25 mt-1">Password :</label>
@@ -100,7 +142,8 @@ export default function AddAdmin() {
                   type='password'
                   className='w-75'
                   value={formik.values.password}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange}
+                  required />
               </div>
               <div className="d-flex mb-4">
                 <label htmlFor="adminAt" className="form-label w-25 mt-1">Admin at :</label>
@@ -112,14 +155,14 @@ export default function AddAdmin() {
                   name='adminAt'
                   value={formik.values.adminAt}
                   onChange={formik.handleChange}
+                  required
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
-                  <MenuItem value="">
-                    <em> </em>
-                  </MenuItem>
-                  <MenuItem value=''></MenuItem>
-                  <MenuItem value=''></MenuItem>
-                  <MenuItem value=''></MenuItem>
+                  {communities.map((community) =>
+                    <MenuItem value={community.community_name}>
+                      {community.community_name}
+                    </MenuItem>
+                  )}
                 </Select>
               </div>
               <div className="d-flex mb-4">
@@ -130,16 +173,13 @@ export default function AddAdmin() {
                   size="small"
                   name='degree'
                   displayEmpty
+                  required
                   value={formik.values.degree}
                   onChange={formik.handleChange}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
-                  <MenuItem value="">
-                    <em> </em>
-                  </MenuItem>
-                  <MenuItem value=''></MenuItem>
-                  <MenuItem value=''></MenuItem>
-                  <MenuItem value=''></MenuItem>
+                  <MenuItem value='SuperAdmin'>SuperAdmin</MenuItem>
+                  <MenuItem value='SubAdmin'>SubAdmin</MenuItem>
                 </Select>
               </div>
               <div className="d-flex mb-4">
@@ -150,7 +190,8 @@ export default function AddAdmin() {
                   type='date'
                   className='w-75'
                   value={formik.values.bithday}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange}
+                  required />
               </div>
               <div className="d-flex mb-3">
                 <label htmlFor="address" className="label w-25 mt-1">Address :</label>
@@ -161,8 +202,12 @@ export default function AddAdmin() {
                   className='w-75'
                   variant="outlined"
                   value={formik.values.address}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange}
+                  required />
               </div>
+              {/* <div className=" text-danger text-capitalize">
+                {StatusError}
+              </div> */}
               <Box sx={{ display: 'flex', flexDirection: 'row' }} >
                 <Box sx={{ flex: '1 1 auto' }} />
                 <Button type='submit' variant='outlined' className='button'>

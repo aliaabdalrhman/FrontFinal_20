@@ -6,17 +6,22 @@ import '../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primeicons/primeicons.css';
 import './index.css';
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+    <>
+        <ToastContainer  position="bottom-right" />
+        <App />
+    </>
 
-    <App />
-  
+
+
 );
 
 // If you want to start measuring performance in your app, pass a function

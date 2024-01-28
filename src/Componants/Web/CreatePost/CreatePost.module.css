@@ -8,9 +8,23 @@
     margin-bottom: 10px;
     
 }
+.Title{
+    margin-left: 240px;
+}
 .content{
     margin-top: 45px;
     margin-left: 30px;
+}
+.check1{
+    margin-right: 50px !important;
+    margin-bottom: 12px !important;
+}
+.check2{
+    margin-right: 50px !important;
+    margin-bottom: 12px !important;
+}
+.info{
+    width:75% !important;
 }
 .TextField1{
     width: 85%;

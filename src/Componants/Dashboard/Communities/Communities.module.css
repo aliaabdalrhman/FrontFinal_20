@@ -13,10 +13,15 @@
     position: relative;
 
 }
-.header{
+
+.header {
     display: flex;
-    flex-wrap: wrap; 
-    gap: 40px; 
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.desc {
+    font-size: 15px !important;
 }
 
 .card::before {
@@ -43,15 +48,41 @@
     left: 25px;
     display: block;
     z-index: 1;
+    font-size: 30px !important;
+
+}
+
+.card:hover .delete {
+    display: block;
+    z-index: 1;
+    color: #fff;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+}
+
+.card:hover .update {
+    display: block;
+    z-index: 1;
+    color: #fff;
+    position: absolute;
+    right: 17px;
+    top: 47px;
+    font-size: 24px;
+
+}
+.card .delete,.update{
+    display: none;
 }
 
 .card h1 {
     display: none;
     color: white !important;
     position: absolute;
-    font-weight:600 ;
+    font-weight: 600;
     font-family: 'Gelasio', serif !important;
-    
+
 }
 
 .slider {

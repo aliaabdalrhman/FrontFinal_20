@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -14,6 +14,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import axios from 'axios';
+import { EmailContext } from '../../../Context/GetEmail';
+import { format } from 'date-fns';
 
 function CustomTabPanel(props) {
 
@@ -60,6 +63,25 @@ export default function Setting() {
     navigate('/forgotPassword')
   }
 
+  const [userData, setUserData] = useState(null);
+  const { Email1 } = useContext(EmailContext);
+
+  async function getUserInfo() {
+    try {
+      let { data } = await axios.get(`https://abr-dcxu.onrender.com/userDo/${Email1}/viewMyPersonalInformation`);
+      console.log(data);
+      // setUserData(data);
+    }
+    catch (error) {
+      console.log('error:', error);
+    }
+  }
+
+  useEffect(() => {
+
+    getUserInfo();
+
+  }, [])
   return (
     <div className='sid' >
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -94,55 +116,81 @@ export default function Setting() {
                   </Box> */}
                   <Box sx={{ ml: 1, mt: 3 }}>
                     <div className='d-flex justify-content-between gap-4'>
-                      <div className={`p-float-label ${style.input}`}>
-                        <InputText id="FirstName" type='text' className={`${style.TextField1}`} />
-                        <label htmlFor="FirstName" className='ms-2'>First Name</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="firstname" className="form-label">First Name :</label>
+                        <input type="text"
+                          className={`form-control textfield ${style.TextField}`}
+                          id="firstName"
+                          name='firstName'
+                        placeholder={userData.firstName}
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
                       </div>
-                      <div className={`p-float-label ${style.input}`}>
-                        <InputText id="LastName" type='text' className={`${style.TextField1}`} />
-                        <label htmlFor="LastName" className='ms-2'>Last Name</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="lastName" className="form-label">Last Name :</label>
+                        <input type="text"
+                          className={`form-control textfield ${style.TextField}`}
+                          id="lastName"
+                          name='lastName'
+                        placeholder={userData.lastName}
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
                       </div>
                     </div>
                     <div className='d-flex justify-content-between gap-4'>
-                      <div className={`p-float-label ${style.input}`}>
-                        <InputText id="phonenumber" type='text' className={`${style.TextField1}`} />
-                        <label htmlFor="phonenumber" className='ms-2'>Phone Number</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="phoneNumber" className="form-label">Phone Number:</label>
+                        <input type="text"
+                          className={`form-control textfield ${style.TextField}`}
+                          id="phoneNumber"
+                          name='phoneNumber'
+                        // placeholder='Phone Name'
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
                       </div>
-                      <div className={`p-float-label ${style.input}`}>
-                        <InputText id="email" type='email' className={` ${style.TextField1}`} />
-                        <label htmlFor="email" className='ms-2'>Email</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="email" className="form-label">Email:</label>
+                        <input type="text"
+                          className={`form-control textfield ${style.TextField}`}
+                          id="email"
+                          name='email'
+                          disabled
+                        placeholder={userData.email}
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
                       </div>
                     </div>
                     <div className='d-flex justify-content-between gap-4'>
-                      <div className={`p-float-label ${style.input}`}>
-                        <InputText id="country" type='text' className={`${style.TextField1}`} />
-                        <label htmlFor="country" className='ms-2'>Country</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="address" className="form-label">Adderss :</label>
+                        <input type="text"
+                          className={`form-control textfield ${style.TextField}`}
+                          id="address"
+                          name='address'
+                        placeholder={userData.address}
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
                       </div>
-                      <Box sx={{ mr: 28 }} >
-                        <FormControl >
-                          <FormLabel className='font' id="demo-row-radio-buttons-group-label">Gender</FormLabel>
-                          <RadioGroup
-                            row
-                            aria-labelledby="demo-row-radio-buttons-group-label"
-                            name="row-radio-buttons-group"
-                            className='font'
-                          >
-                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                          </RadioGroup>
-                        </FormControl>
-                      </Box>
-                    </div>
-                    <div className={`p-float-label  ${style.input}`}>
-                      <InputTextarea rows={4} id='Pio' cols={100} className={`${style.TextArea}`} />
-                      <label htmlFor="Pio" className='ms-2'>Pio</label>
+                      <div className={`mb-3 ${style.input}`}>
+                        <label htmlFor="birth_date" className="form-label">Birthday :</label>
+                        <input type="text"
+                          name='birth_date'
+                          className={`form-control textfield ${style.TextField}`}
+                          id="birth_date"
+                        placeholder={format(new Date(userData.birth_date), 'dd-MM-yyyy')}
+                        // value={formik.values.community_name}
+                        // onChange={formik.handleChange} 
+                        />
+                      </div>
+
                     </div>
                   </Box>
-
-                  <Box sx={{ ml: 72 }}>
-                    <Button variant="outlined" className={`button  ${style.btn}`} >
-                      Cancel
-                    </Button>
+                  <Box sx={{}}>
                     <Button variant="contained" className={`button ms-2 ${style.btn}`}  >
                       save
                     </Button>
@@ -154,17 +202,25 @@ export default function Setting() {
               <Box className={`d-flex font`} >
                 <form >
                   <Box sx={{ ml: 1, mt: 3 }}>
-                    <div className={`p-float-label ${style.input}`}>
-                      <InputText id="oPassword" type='password' className={`${style.TextField1}`} />
-                      <label htmlFor="oPassword" className='ms-2'>Old Password</label>
+                    <div className={`mb-3 ${style.input}`}>
+                      <label htmlFor="oldPassword" className="form-label">Old Password :</label>
+                      <input type="oldPassword"
+                        className={`form-control textfield ${style.TextField}`}
+                        id="oldPassword"
+                      // placeholder='Email'
+                      // value={formik.values.community_name}
+                      // onChange={formik.handleChange} 
+                      />
                     </div>
-                    <div className={`p-float-label ${style.input}`}>
-                      <InputText id="nPassword" type='password' className={`${style.TextField1}`} />
-                      <label htmlFor="nPassword" className='ms-2'>New Password</label>
-                    </div>
-                    <div className={`p-float-label ${style.input}`}>
-                      <InputText id="cPassword" type='password' className={`${style.TextField1}`} />
-                      <label htmlFor="cPassword" className='ms-2'>Confirm New Password</label>
+                    <div className={`mb-3 ${style.input}`}>
+                      <label htmlFor="newPassword" className="form-label">New Password :</label>
+                      <input type="newPassword"
+                        className={`form-control textfield ${style.TextField}`}
+                        id="newPassword"
+                      // placeholder='Email'
+                      // value={formik.values.community_name}
+                      // onChange={formik.handleChange} 
+                      />
                     </div>
                   </Box>
                   <Box sx={{ ml: 2 }}>
@@ -173,21 +229,21 @@ export default function Setting() {
                     </Button>
                   </Box>
                   <Box sx={{ ml: 2, mt: 3 }}>
-                    <Link className={`text-decoration-none ${style.forgot}`}  style={{ color: '#156ac0' }} onClick={forgotPassword}> Forgot Password ?</Link>
+                    <Link className={`text-decoration-none ${style.forgot}`} style={{ color: '#156ac0' }} onClick={forgotPassword}> Forgot Password ?</Link>
                   </Box>
                 </form>
               </Box>
             </CustomTabPanel>
             {/* <CustomTabPanel value={value} index={2}>
-     <Box className={`d-flex`} >
-       <form >
-         <Box sx={{mb:4}}>
-           <h2 className=''>Notification</h2>
-         </Box>
-     
-       </form>
-     </Box>
-     </CustomTabPanel> */}
+              <Box className={`d-flex`} >
+                <form >
+                  <Box sx={{ mb: 4 }}>
+                    <h2 className=''>Notification</h2>
+                  </Box>
+
+                </form>
+              </Box>
+            </CustomTabPanel> */}
           </Box>
         </Box>
       </Box>

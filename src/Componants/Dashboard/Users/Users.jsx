@@ -1,9 +1,6 @@
 import { Avatar, Box, Button, Toolbar, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import '../../../Pages/Css/Pages.css'
-import { Column } from 'primereact/column';
-import { TreeTable } from 'primereact/treetable';
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 import style from './Users.module.css'
 import AddUser from '../AddUser/AddUser.jsx';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -11,101 +8,185 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ResetPassword from '../ResetPassword/ResetPassword.jsx';
+import axios from 'axios';
+import Skeleton from '@mui/material/Skeleton';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { format } from 'date-fns';
 
 export default function Users() {
 
-  const [accordionData, setAccordionData] = useState([
-    {}, {}, {}, {}, {}
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [accordionData, setAccordionData] = useState([]);
 
-  const initialAccordionState = accordionData.map((item) => {
-    return { isOpen: false };
-  });
-
-  // تعيين الحالة الأولية
-  useState(initialAccordionState);
   const handleAccordionClick = (index) => {
     const updatedAccordionData = [...accordionData];
     updatedAccordionData[index].isOpen = !updatedAccordionData[index].isOpen;
     setAccordionData(updatedAccordionData);
   };
-
+  async function viewUsers() {
+    try {
+      let { data } = await axios.get('https://abr-dcxu.onrender.com/user/viewUser');
+      setUsers(data.Users);
+      const initialAccordionState = data.Users.map(() => {
+        return { isOpen: false };
+      });
+      setAccordionData(initialAccordionState);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  const handleEnableDisableAccount = (email) => {
+    const updatedUsers = [...users];
+    const userIndex = updatedUsers.findIndex(user => user.email === email);
+    if (userIndex !== -1) {
+      const apiUrl = updatedUsers[userIndex].state_us ? `https://abr-dcxu.onrender.com/admins/disableAccount/${email}` : `https://abr-dcxu.onrender.com/admins/enableAccount/${email}`;
+      axios.post(apiUrl, { userId: email })
+        .then(response => {
+          if (response.data.msg === 'Account is enabled' || response.data.msg === 'Account is disabled') {
+            updatedUsers[userIndex].state_us = !updatedUsers[userIndex].state_us;
+            setUsers(updatedUsers);
+            console.log('تم تحديث حالة الحساب بنجاح');
+            // حفظ الحالة المحدثة في localStorage
+            localStorage.setItem('users', JSON.stringify(updatedUsers));
+          } else {
+            console.error('حدث خطأ أثناء تحديث حالة الحساب');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  };
+  const handleDeleteAccount = (email) => {
+    const confirmDelete = () => {
+      if (window.confirm('are you sure to delete this User ?')) {
+        const apiUrl = `https://abr-dcxu.onrender.com/user/deleteUser/${email}`; // استبدل برابط الـ API الخاص بحذف الحساب
+        axios.delete(apiUrl, { data: { email: email } })
+          .then(response => {
+            toast.success('تم حذف الحساب بنجاح');
+            viewUsers(); // إعادة تحميل قائمة المستخدمين بعد الحذف
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            toast.error('حدث خطأ أثناء حذف الحساب');
+          });
+      }
+    };
+    confirmDelete();
+  };
+  
+  useEffect(() => {
+    setTimeout(() => {
+      viewUsers();
+      setLoading(false);
+    }, 3000);
+    const savedUsers = localStorage.getItem('users');
+    if (savedUsers) {
+      setUsers(JSON.parse(savedUsers));
+    }
+  }, []);
   return (
+
     <div className='sid'>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <AddUser />
-        <Box sx={{ transform: 'scale(0.96)', borderRadius: '50px', mt: 2 }}>
-          {accordionData.map((accordion, index) => (
-            <Accordion
-              className={`mb-3 ${style.accordion}`}
-              key={index}
-              expanded={accordion.isOpen}
-              onChange={() => handleAccordionClick(index)}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
+        <AddUser viewUsers={viewUsers}/>
+        {loading ? (
+          <Box spacing={1} sx={{ width: 1150, ml: 4 }}>
+            {[...Array(5)].map((_, index) => (
+              <Skeleton key={index} sx={{ height: 100 }} />
+            ))}
+          </Box>
+        ) : (
+          users.map((user, index) => (
+            <Box key={index} sx={{ transform: 'scale(0.96)', borderRadius: '50px', mt: 2 }}>
+              <Accordion
+                key={index}
+                expanded={accordionData[index].isOpen}
+                onChange={() => handleAccordionClick(index)}
               >
-                <Typography className='font'>
-                  <Box sx={{ display: 'flex', flexDirection: 'row' }} >
-                    {accordion.isOpen ? <Typography variant='h5' className='font ms-2 mt-2'> Alia abdalrhman </Typography> : <>
-                      <Avatar src='img/image1.jpg' alt='' style={{ width: '40px', height: '40px' }} className='border' />
-                      <Typography variant='h6' className='font ms-2 mt-1'> Alia abdalrhman</Typography>
-                    </>
-                    }
-                  </Box>
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-
-                <Box sx={{mt:1}}>
-                  <Box sx={{ flexDirection: 'row' }} className='d-flex justify-content-center gap-5 '>
-                    <Box className='d-flex justify-content-center align-items-center ms-2 '>
-                      <Avatar src='img/image1.jpg' alt='' className='border' style={{ width: '200px', height: '200px' }} />
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className='font'>
+                    <Box sx={{ display: 'flex', flexDirection: 'row' }} >
+                      {!accordionData[index].isOpen ? (
+                        <>
+                          <Avatar src='img/image1.jpg' alt='' style={{ width: '40px', height: '40px' }} className='border' />
+                          <Typography variant='h6' className='font ms-2 mt-1'>
+                            {user.firstName} {user.lastName}
+                          </Typography>
+                        </>
+                      ) : (
+                        <Typography variant='h5' className='font ms-2 mt-2'>
+                          {user.firstName} {user.lastName}
+                        </Typography>
+                      )}
                     </Box>
-                    <Box className='d-flex justify-content-center align-items-center '>
-                      <div className="row">
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>User name: </p>
-                          <p className={`${style.info}`}>Alia abdalrhman</p>
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box sx={{ mt: 1 }}>
+                    <Box sx={{ flexDirection: 'row' }} className='d-flex justify-content-center gap-5 '>
+                      <Box className='d-flex justify-content-center align-items-center ms-2 '>
+                        <Avatar src='img/image1.jpg' alt='' className='border' style={{ width: '200px', height: '200px' }} />
+                      </Box>
+                      <Box className='d-flex justify-content-center align-items-center '>
+                        <div className="row">
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>First Name: </p>
+                            <p className={`${style.info}`}>{user.firstName}</p>
+                          </div>
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Last Name: </p>
+                            <p className={`${style.info}`}>{user.lastName}</p>
+                          </div>
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Email: </p>
+                            <p className={`${style.info}`}>{user.email}</p>
+                          </div>
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Address: </p>
+                            <p className={`${style.info}`}>{user.address}</p>
+                          </div>
+
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Stateus: </p>
+                            <p className={`${style.info}`}>
+                              {user.state_us ? 'Enabled' : 'Disabled'}
+                            </p>
+                          </div>
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Created Date: </p>
+                            <p className={`${style.info}`}>{format(new Date(user.createdAt), 'dd-MM-yyyy')}</p>
+                          </div>
+                          <div className="col-md-6 d-flex mb-2">
+                            <p className={`${style.title}`}>Birthday: </p>
+                            <p className={`${style.info}`}>{format(new Date(user.birth_date), 'dd-MM-yyyy')}</p>
+                          </div>
                         </div>
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>Email: </p>
-                          <p className={`${style.info}`}>Aliaabdalrhman@gmail.com</p>
-                        </div>
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>Address: </p>
-                          <p className={`${style.info}`}>Palestine</p>
-                        </div>
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>Pio: </p>
-                          <p className={`${style.info}`}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                        </div>
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>Created Date: </p>
-                          <p className={`${style.info}`}>30-10-2022</p>
-                        </div>
-                        <div className="col-md-6 d-flex mb-2">
-                          <p className={`${style.title}`}>Birthday: </p>
-                          <p className={`${style.info}`}>17-10-2001</p>
-                        </div>
-                      </div>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', mt: 5, ml: 82 }}>
+                      <Button variant="contained"
+                        onClick={() => handleEnableDisableAccount(user.email)}
+                        className={`button ${style.btn}`}
+                        size="small" sx={{ mr: 2 }} > {user.state_us ? 'Disable Account' : 'Enable Account'}
+                      </Button>
+                      <Button variant="contained"
+                        className={`button ${style.btn}`}
+                        size="small" sx={{ mr: 2 }}
+                        onClick={() => handleDeleteAccount(user.email)}>Delete Account</Button>
+                      <ResetPassword email={user.email} />
                     </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', mt: 5, ml: 82 }}>
-                    <Button variant="contained" className={`button ${style.btn}`} size="small" sx={{ mr: 2 }} >Disable Account</Button>
-                    <Button variant="contained" className={`button ${style.btn}`} size="small" sx={{ mr: 2 }} >Delete Account</Button>
-                    <ResetPassword />
-                  </Box>
-                </Box>
-
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
+                </AccordionDetails>
+              </Accordion>
+            </Box>
+          ))
+        )}
       </Box>
-
-
     </div>
-  )
+  );
 }

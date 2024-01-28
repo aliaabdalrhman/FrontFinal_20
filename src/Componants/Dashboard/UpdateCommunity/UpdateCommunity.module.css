@@ -1,0 +1,37 @@
+
+.TextField {
+    width: 430px;
+    border: 1px solid #156ac0 !important;
+    border-radius: 30px;
+    padding: 10px;
+}
+
+.signinbtn {
+    width: 130px;
+    border-radius: 20px !important;
+}
+/* .img{
+    border-radius: 30%;
+} */
+.title{
+  
+    margin-top: 40px;
+    
+}
+.send {
+    width: 170px;
+    border: 1px solid #ffffffdf !important;
+    border-radius: 20px !important;
+    margin-top: 32px;
+}
+.check{
+    margin-left: 33.5px;
+}
+.inputText{
+    border-radius: 20px ;
+    border-color: #156ac0;
+    /* padding: 10px;; */
+}
+.input {
+    margin-bottom: 27px ;
+}

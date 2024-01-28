@@ -3,8 +3,9 @@ import style from './AddUser.module.css'
 import React, { useState } from 'react'
 import axios from 'axios';
 import { useFormik } from 'formik';
+import { toast } from 'react-toastify';
 
-export default function AddUser() {
+export default function AddUser({ viewUsers }) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -12,20 +13,57 @@ export default function AddUser() {
   };
 
   const handleClose = () => {
+    viewUsers();
     setOpen(false);
   };
 
   let formik = useFormik({
     initialValues: {
-
-
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      birthday: '',
+      address: ''
     },
     onSubmit: adduser
   })
 
+  let [StatusError, setStatusError] = useState(' ');
 
   async function adduser(values) {
-    let { data } = await axios.post('', values)
+    try {
+      let { data } = await axios.post('https://abr-dcxu.onrender.com/user/addUser', values);
+      // console.log(data)
+      if (data === "success") {
+        toast.success('successfully created post', {
+          position: 'top-center',
+          autoClose: true,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: true,
+          theme: 'dark'
+        });
+        formik.resetForm()
+      }
+    }
+    catch (error) {
+      toast.error('Error in Add User !!!', {
+        position: 'top-center',
+        autoClose: true,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: true,
+        theme: 'dark'
+      });
+      setStatusError(error.response.data.msg)
+    }
+
+
   }
   return (
     <>
@@ -38,7 +76,7 @@ export default function AddUser() {
             Add new User
           </div>
           <div className='  d-flex justify-content-center align-items-center ms-auto' onClick={handleClose}>
-            <i class="fa-solid fa-xmark ms-auto" style={{ cursor: 'pointer' }}></i>
+            <i className="fa-solid fa-xmark ms-auto" style={{ cursor: 'pointer' }} />
           </div>
         </DialogTitle>
         <DialogContent style={{ overflow: 'hidden' }} >
@@ -46,9 +84,23 @@ export default function AddUser() {
           <DialogContentText className='font'>
             <form onSubmit={formik.handleSubmit} className=' mt-4 ' >
               <div className="d-flex mb-4">
-                <label htmlFor="" className="label w-25 mt-1">User Name:</label>
+                <label htmlFor="" className="label w-25 mt-1">First Name:</label>
                 <TextField id=""
                   size="small"
+                  name='firstName'
+                  value={formik.values.firstName}
+                  onChange={formik.handleChange}
+                  label=" "
+                  type='text'
+                  className='w-75' />
+              </div>
+              <div className="d-flex mb-4">
+                <label htmlFor="" className="label w-25 mt-1">Last Name:</label>
+                <TextField id=""
+                  size="small"
+                  name='lastName'
+                  value={formik.values.lastName}
+                  onChange={formik.handleChange}
                   label=" "
                   type='text'
                   className='w-75' />
@@ -57,8 +109,10 @@ export default function AddUser() {
                 <label htmlFor="" className="label w-25 mt-1">Email :</label>
                 <TextField id=""
                   size="small"
-                  label=""
+                  name='email'
                   type='email'
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
                   className='w-75' />
               </div>
               <div className="d-flex mb-4">
@@ -66,6 +120,9 @@ export default function AddUser() {
                 <TextField id=""
                   size="small"
                   type='password'
+                  name='password'
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
                   className='w-75' />
               </div>
               <div className="d-flex mb-4">
@@ -73,15 +130,18 @@ export default function AddUser() {
                 <TextField id="bithday"
                   size="small"
                   type='date'
+                  name='birthday'
                   className='w-75'
-                  value={formik.values.bithday}
-                  onChange={formik.handleChange} />
+                  value={formik.values.birthday}
+                  onChange={formik.handleChange}
+                />
               </div>
               <div className="d-flex mb-4">
                 <label htmlFor="address" className="label w-25 mt-1">Address :</label>
                 <TextField id="address"
                   size="small"
                   type='text'
+                  name='address'
                   className='w-75'
                   value={formik.values.address}
                   onChange={formik.handleChange} />
