@@ -5,7 +5,6 @@ import style from './AddProperety.module.css'
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import ShowProperety from '../ShowProperety/ShowProperety';
 import { useLocation } from 'react-router-dom';
 export default function AddProperety({ community_name }) {
     const [open, setOpen] = useState(false);
@@ -36,40 +35,22 @@ export default function AddProperety({ community_name }) {
     })
     async function sendProperety(values) {
         try {
-            let { data } = await axios.post(`https://abr-dcxu.onrender.com/community/${community_name}/addProperty`, values)
+            let { data } = await axios.post(`http://localhost:3700/community/${community_name}/addProperty`, values)
             if (data == 'Added successfully.')
-                formik.resetForm()
-            toast.success('successfully added properety', {
-                position: 'top-center',
-                autoClose: true,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: false,
-                progress: false,
-                theme: 'dark'
-            });
+                formik.resetForm();
+            toast.success('successfully added properety');
             setError('');
 
         }
         catch (error) {
-            toast.error('faild added properety', {
-                position: 'top-center',
-                autoClose: true,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: false,
-                draggable: false,
-                progress: false,
-                theme: 'dark'
-            });
+            toast.error('faild added properety')
             console.log(error.response.data.message);
             setError(error.response.data.message);
         }
     }
     async function getPropereties(community_name) {
         try {
-            let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${community_name}/viewProperty`);
+            let { data } = await axios.get(`http://localhost:3700/community/${community_name}/viewProperty`);
             // console.log(data);
             setProperities(data);
         }
@@ -80,33 +61,15 @@ export default function AddProperety({ community_name }) {
     const handleDeleteProperety = (community_name, _id) => {
         const confirmDelete = () => {
             if (window.confirm('are you sure to delete this properety ?')) {
-                const apiUrl = `https://abr-dcxu.onrender.com/community/${community_name}/deleteProperty/${_id}`; // استبدل برابط الـ API الخاص بحذف الحساب
+                const apiUrl = `http://localhost:3700/community/${community_name}/deleteProperty/${_id}`; // استبدل برابط الـ API الخاص بحذف الحساب
                 axios.delete(apiUrl, { data: { _id: _id, community_name: community_name } })
                     .then(response => {
-                        toast.success('successfully deleted properety', {
-                            position: 'top-center',
-                            autoClose: true,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: true,
-                            theme: 'dark'
-                        });
+                        toast.success('successfully deleted properety')
                         getPropereties(community_name); // إعادة تحميل قائمة المستخدمين بعد الحذف
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        toast.error('error in delete', {
-                            position: 'top-center',
-                            autoClose: false,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: true,
-                            theme: 'dark'
-                        });
+                        toast.error('error in delete')
                     });
             }
         };

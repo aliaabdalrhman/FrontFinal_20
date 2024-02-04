@@ -33,7 +33,7 @@ export default function NewPassword() {
 
     async function sendCode(values) {
         try {
-            let { data } = await axios.patch('https://abr-dcxu.onrender.com/auth/sendCode', values);
+            let { data } = await axios.patch('http://localhost:3700/auth/sendCode', values);
 
             // localStorage.setItem('password', data.user.password);
             // decodepassword();
@@ -62,7 +62,11 @@ export default function NewPassword() {
             <div className={`d-flex justify-content-center align-items-center`}>
                 <div className={`d-flex  ${style.reset}`}>
                     <Box className={`d-flex justify-content-center align-items-center ${style.asideR}`} >
-
+                        <div className=" mb-5">
+                            <div className=''><img src="/Images/Logo1.png" className='' />
+                                <p className={`font ms-2 ${style.logoName}`}>CommuNet</p>
+                            </div>
+                        </div>
                     </Box>
                     <Box className={`d-flex justify-content-center align-items-center ${style.asideL}`} >
                         <form onSubmit={formik.handleSubmit}>

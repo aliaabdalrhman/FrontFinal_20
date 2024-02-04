@@ -33,38 +33,18 @@ export default function AddUser({ viewUsers }) {
 
   async function adduser(values) {
     try {
-      let { data } = await axios.post('https://abr-dcxu.onrender.com/user/addUser', values);
-      // console.log(data)
-      if (data === "success") {
-        toast.success('successfully created post', {
-          position: 'top-center',
-          autoClose: true,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: true,
-          theme: 'dark'
-        });
-        formik.resetForm()
+      let { data } = await axios.post('http://localhost:3700/user/addUser', values);
+      if (data.msg === "user created") {
+        toast.success('successfully Added User')
+        formik.resetForm();
       }
     }
     catch (error) {
-      toast.error('Error in Add User !!!', {
-        position: 'top-center',
-        autoClose: true,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: true,
-        theme: 'dark'
-      });
+      toast.error('Error in Add User !!!');
       setStatusError(error.response.data.msg)
     }
-
-
   }
+
   return (
     <>
       <Button variant="contained" className='button mb-3 ms-4 ' onClick={handleClickOpen}>
@@ -157,7 +137,6 @@ export default function AddUser({ viewUsers }) {
             </form>
           </DialogContentText>
         </DialogContent>
-
       </Dialog>
     </>
   )

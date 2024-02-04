@@ -16,11 +16,11 @@ export default function Communities() {
 
   const [loading, setLoading] = useState(true);
   const [communities, setCommunities] = useState([]);
- 
+
 
   async function getCommunities() {
     try {
-      let { data } = await axios.get('https://abr-dcxu.onrender.com/community/getCommunities');
+      let { data } = await axios.get(`http://localhost:3700/community/${localStorage.getItem('email')}/getCommunities`);
       console.log(data.communities)
       setCommunities(data.communities);
     }
@@ -29,33 +29,6 @@ export default function Communities() {
     }
   }
 
-
-  const handleDeleteCommunity = (community_name) => {
-    const confirmDelete = () => {
-      if (window.confirm('are you sure to delete this community ?')) {
-        const apiUrl = `https://abr-dcxu.onrender.com/community/${community_name}/deleteCommunity`;
-        axios.delete(apiUrl, { data: { community_name: community_name } })
-          .then(response => {
-            toast.success('successfully deleted community', {
-              position: 'top-center',
-              autoClose: false,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: true,
-              theme: 'dark'
-            });
-            getCommunities(); // إعادة تحميل قائمة المستخدمين بعد الحذف
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            toast.error('error in delete');
-          });
-      }
-    };
-    confirmDelete();
-  };
   useEffect(() => {
     setTimeout(() => {
       getCommunities();
@@ -77,9 +50,9 @@ export default function Communities() {
             ))}
           </Grid>
         ) : (
-          <div className={`d-flex justify-content-center ${style.header}`} >
+          <div className={`d-flex justify-content-center mt-5 ${style.header}`} >
             {communities.map((community) =>
-              <Link to={`${community._id}`} state={{ id: community._id }}>
+              <Link to={`${community._id}`} state={{ id: community._id }} key={community._id}>
                 <Card className={`${style.card}`} key={community._id} >
                   <h1 >{community.community_name}
                     <p className={style.desc}>{community.description}</p>

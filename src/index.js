@@ -4,6 +4,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
 import '../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import 'primeicons/primeicons.css';
 import './index.css';
 import "slick-carousel/slick/slick.css";
@@ -11,13 +12,10 @@ import "slick-carousel/slick/slick-theme.css";
 import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <>
-        <ToastContainer  position="bottom-right" />
-        <App />
+    <>        <App />
     </>
 
 

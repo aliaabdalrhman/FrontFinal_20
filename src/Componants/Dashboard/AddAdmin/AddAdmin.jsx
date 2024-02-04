@@ -18,7 +18,7 @@ export default function AddAdmin({ viewAdmins }) {
     viewAdmins();
     setOpen(false);
   };
-  
+
   let [StatusError, setStatusError] = useState(' ');
 
   let formik = useFormik({
@@ -36,45 +36,27 @@ export default function AddAdmin({ viewAdmins }) {
   })
   async function addadmin(values) {
     try {
-      let { data } = await axios.post('https://abr-dcxu.onrender.com/admins/addAdmin', values);
-      if (data === "success") {
-        toast.success('successfully created post', {
-          position: 'top-center',
-          autoClose: true,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: true,
-          theme: 'dark'
-        });
+      let { data } = await axios.post('http://localhost:3700/admins/addAdmin', values);
+      if (data.msg == "admin created") {
+        toast.success('successfully Added Admin')
         formik.resetForm()
       }
     }
     catch (error) {
-      toast.error('Error in Add User !!!', {
-        position: 'top-center',
-        autoClose: true,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: true,
-        theme: 'dark'
-      });
+      toast.error('Error in Add Admin !!!')
       setStatusError(error.response.data.msg)
     }
   }
 
   async function getadmindata() {
     try {
-      let { data } = await axios.get('https://abr-dcxu.onrender.com/admins/addAdmin/community');
+      let { data } = await axios.get('http://localhost:3700/admins/addAdmin/community');
       setCommunities(data);
 
     } catch (err) {
       console.log('error')
     }
-    // let { data } = await axios.get('https://abr-dcxu.onrender.com/admins/addAdmin/community')
+    // let { data } = await axios.get('http://localhost:3700/admins/addAdmin/community')
     // setCommunities(data);
   }
 
@@ -145,7 +127,25 @@ export default function AddAdmin({ viewAdmins }) {
                   onChange={formik.handleChange}
                   required />
               </div>
+
               <div className="d-flex mb-4">
+                <label htmlFor="degree" className="form-label w-25 mt-1">Degree :</label>
+                <Select
+                  id='degree'
+                  className="w-75"
+                  size="small"
+                  name='degree'
+                  displayEmpty
+                  required
+                  value={formik.values.degree}
+                  onChange={formik.handleChange}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  <MenuItem value='SuperAdmin'>SuperAdmin</MenuItem>
+                  <MenuItem value='SubAdmin'>SubAdmin</MenuItem>
+                </Select>
+              </div>
+              {formik.values.degree == 'SubAdmin' ? <div className="d-flex mb-4">
                 <label htmlFor="adminAt" className="form-label w-25 mt-1">Admin at :</label>
                 <Select
                   id='adminAt'
@@ -164,24 +164,8 @@ export default function AddAdmin({ viewAdmins }) {
                     </MenuItem>
                   )}
                 </Select>
-              </div>
-              <div className="d-flex mb-4">
-                <label htmlFor="degree" className="form-label w-25 mt-1">Degree :</label>
-                <Select
-                  id='degree'
-                  className="w-75"
-                  size="small"
-                  name='degree'
-                  displayEmpty
-                  required
-                  value={formik.values.degree}
-                  onChange={formik.handleChange}
-                  inputProps={{ 'aria-label': 'Without label' }}
-                >
-                  <MenuItem value='SuperAdmin'>SuperAdmin</MenuItem>
-                  <MenuItem value='SubAdmin'>SubAdmin</MenuItem>
-                </Select>
-              </div>
+              </div> : ''}
+
               <div className="d-flex mb-4">
                 <label htmlFor="bithday" className="form-label w-25 mt-1">Birthday :</label>
                 <TextField size="small"

@@ -19,7 +19,7 @@ export default function UpdateCommunity() {
 
   async function getcommunityDetails() {
     try {
-      let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${_id}`);
+      let { data } = await axios.get(`http://localhost:3700/community/${_id}`);
       setCommunity(data.Community);
       setImage(data.Community.image.secure_url)
     }
@@ -33,13 +33,13 @@ export default function UpdateCommunity() {
     description: '',
     image: null,
   };
-  
+
   const onDrop = useCallback(acceptedFiles => {
     formik.setFieldValue('image', acceptedFiles[0]); // تعيين الصورة المحددة إلى حقل الصورة في formik
   }, []);
- 
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: 'image/*', maxFiles: 1 }); // تحديد أنه يمكن تحميل ملف واحد من نوع الصور فقط
-  
+
   const formik = useFormik({
     initialValues,
     onSubmit: updateData
@@ -50,20 +50,13 @@ export default function UpdateCommunity() {
     formData.append('community_name', values.community_name);
     formData.append('description', values.description);
     formData.append('image', values.image);
+    console.log(values)
     try {
-      const { data } = await axios.put(`https://abr-dcxu.onrender.com/community/${_id}`, formData);
-      if (data.message = 'success') {
+      const { data } = await axios.put(`http://localhost:3700/community/${_id}`, formData);
+      console.log(data)
+      if (data.message === 'Community updated successfully') {
         setError('')
-        toast.success('successfully updated community', {
-          position: 'top-center',
-          autoClose: true,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: true,
-          theme: 'dark'
-        });
+        toast.success('successfully updated community');
       }
       else {
         console.log('error')
@@ -76,7 +69,7 @@ export default function UpdateCommunity() {
   };
   async function getPropereties(communityname) {
     try {
-      let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${communityname}/viewProperty`);
+      let { data } = await axios.get(`http://localhost:3700/community/${communityname}/viewProperty`);
       setProperities(data);
     }
     catch (error) {
@@ -135,7 +128,8 @@ export default function UpdateCommunity() {
                   name='description'
                   placeholder={Community.description}
                   value={formik.values.description}
-                  onChange={formik.handleChange} />
+                  onChange={formik.handleChange} 
+                  />
               </div>
             </div>
             <div className='text-danger'>

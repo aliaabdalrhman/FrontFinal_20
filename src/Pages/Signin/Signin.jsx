@@ -20,22 +20,18 @@ export default function Signin() {
 
   const { saveCurrentUser } = useContext(UserContext);
 
-
-
   let formik = useFormik({
     initialValues: {
       email: '',
       password: '',
     },
-    // validationSchema: SignInSchema,
     onSubmit: sendSignInData,
 
   })
 
 
   async function sendSignInData(values) {
-    let { data } = await axios.post('https://abr-dcxu.onrender.com/auth/signin', values)
-      // console.log(data)
+    let { data } = await axios.post('http://localhost:3700/auth/signin', values)
       .catch((err) => {
         console.log(err)
         setStatusError(err.response.data.message);
@@ -54,14 +50,8 @@ export default function Signin() {
       else if (data.role == 'User') {
         navigate('/communities');
       }
-      // console.log('welcome');
     }
-    // else if (data.message == "User not found") {
-    //   alert('User with this email is not registered! Please register or enter correct email address.')
-    // }
-    // else {
-    //   setErroes(data.error);
-    // }
+
   }
 
   const GotoSignUp = () => {
@@ -75,7 +65,7 @@ export default function Signin() {
         <div className={`d-flex justify-content-center align-items-center ${style.asideL}`} >
           <form onSubmit={formik.handleSubmit} >
             <div className="d-flex justify-content-center ">
-              <h2 className='mb-5'>Sign in to ABR </h2>
+              <h2 className='mb-5'>Sign in  </h2>
             </div>
             <div className={`p-float-label ${style.input}`}>
               <InputText id="email"
@@ -98,7 +88,7 @@ export default function Signin() {
               <label htmlFor="password" className='ms-2'>Password</label>
             </div>
             <div className='ms-1'>
-              <Link className={`text-decoration-none ${style.forgot}`} to='forgotPassword' style={{ color: '#156ac0' }}> Forgot Password ?</Link>
+              <Link className={`text-decoration-none mt-1 mb-1${style.forgot}`} to='forgotPassword' style={{ color: '#156ac0' }}> Forgot Password ?</Link>
             </div>
             <div className=" text-danger text-capitalize">
               {StatusError}
@@ -108,31 +98,22 @@ export default function Signin() {
                 Sign in
               </Button>
             </div>
-            {/* <div className="d-flex justify-content-center mt-2 ">
-              <Divider className={`mt-2 ${style.divider}`} />
-            </div>
-            <div className="d-flex justify-content-center mt-2">
-              <p >
-                or continue with
-              </p>
-            </div>
-            <div className={`d-flex justify-content-center  ${style.icons}`} >
-              <i className="fa-brands fa-google"></i>
-              <i className="fa-brands fa-facebook-f"></i>
-            </div> */}
           </form>
         </div>
         <div className={`d-flex justify-content-center align-items-center ${style.asideR}`} >
           <div>
-            <div className="d-flex justify-content-center mb-5">
-              <i className="fa-regular fa-star" style={{ fontSize: 80 }}></i>
+            <div className=" mb-5">
+              <div className=''><img src="/Images/Logo1.png" className='' />
+                <p className={`font ms-2 ${style.logoName}`}>CommuNet</p>
+              </div>
             </div>
-            <div className="d-flex justify-content-center mb-4 ">
-              <h1>Hello, Friends !</h1>
-            </div>
+            {/* <div className="d-flex justify-content-center mb-4 ">
+
+            </div> */}
             <div className="d-flex justify-content-center mb-4 ">
               <Typography className='font w-75 text-capitalize'>
-                Welcome to ABR Website Enter Your Personal details and start journey with us.
+                Hello, Friends !
+                Welcome to  CommuNet Website .
               </Typography>
             </div>
             <div className="d-flex justify-content-center mb-5 ">

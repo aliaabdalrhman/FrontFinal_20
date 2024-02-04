@@ -10,7 +10,7 @@ export default function ShowProperety({ community_name }) {
 
     async function getPropereties(community_name) {
         try {
-            let { data } = await axios.get(`https://abr-dcxu.onrender.com/community/${community_name}/viewProperty`);
+            let { data } = await axios.get(`http://localhost:3700/community/${community_name}/viewProperty`);
             console.log(data);
             setProperities(data);
         }
@@ -21,7 +21,7 @@ export default function ShowProperety({ community_name }) {
     const handleDeleteCommunity = (community_name, _id) => {
         const confirmDelete = () => {
             if (window.confirm('are you sure to delete this properety ?')) {
-                const apiUrl = `https://abr-dcxu.onrender.com/community/${community_name}/deleteProperty/${_id}`; // استبدل برابط الـ API الخاص بحذف الحساب
+                const apiUrl = `http://localhost:3700/community/${community_name}/deleteProperty/${_id}`; // استبدل برابط الـ API الخاص بحذف الحساب
                 axios.delete(apiUrl, { data: { _id: _id, community_name: community_name } })
                     .then(response => {
                         toast.success('successfully deleted properety', {

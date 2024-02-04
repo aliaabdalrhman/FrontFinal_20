@@ -23,28 +23,28 @@ export default function Message({ selectedUser, select, setSelect }) {
                 <Avatar src='images/myphoto.jpg' alt='' className='ms-2 mt-3 mb-2' />
                 <Typography variant="h6" className='font ms-2 mt-3'>{selectedUser.name}</Typography>
             </Box>
-            <Box sx={{ height: '355px', overflowY: 'auto' }}>
+            <Box sx={{ height: '330px', overflowY: 'auto' }}>
                 {messages.map((message, index) => (
                     <div key={index}>
                         <Box sx={{ ml: 1, mr: 1 }} className='d-flex gap-2 mt-2'>
-                            <Avatar src='img/image1.jpg' alt='' />
+                            <Avatar  />
                             <p className={`${style.msgcontent}`}>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, praesentium.
+                                Hello Aliaa, What is the duration of use, and what is the price ? 
                             </p>
                         </Box>
                         <Box sx={{ mb: 1, mr: 1, ml: 1 }}>
                             <Box className={`d-flex gap-2 `} style={{ justifyContent: 'flex-end', alignItems: 'center' }} >
                                 <p className={` ${style.msgcontent1}`}>
-                                    Lorem ipsum dolor sit amet  .
+                                    Hi Raghad, its 950$ .
                                 </p>
-                                <Avatar src='images/myphoto.jpg' alt='' />
+                                <Avatar src='/Images/myphoto.jpg' className='mb-3' alt='' />
                             </Box>
                         </Box>
                     </div>
                 ))
                 }
             </Box >
-            <Box sx={{ position: 'fixed', bottom: '10px', ml: 1 }} className='d-flex'>
+            <Box sx={{ position: 'fixed', bottom: '10px' }} className='d-flex ms-3'>
                 <InputText id="msg" type='text' placeholder='Type Your Message...' onChange={(e) => setNewMessage(e.target.value)} value={newMessage} className={` ${style.sendmsg}`} />
                 <SendIcon className='ms-2 mt-2' onClick={handleSendMessage} style={{ cursor: 'pointer', fontSize: '30px', color: '#156ac0' }} />
             </Box>

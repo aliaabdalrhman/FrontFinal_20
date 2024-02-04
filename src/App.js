@@ -24,19 +24,18 @@ import ProtectedRouter from './ProtectedRouter/ProtectedRouter.jsx';
 import ProtectedRouter1 from './ProtectedRouter/ProtectedRouter1.jsx';
 import { RoleProvider } from './Context/GetRole.js';
 import { EmailProvider } from './Context/GetEmail.js';
-import ShowCommunities from './Componants/Dashboard/UpdateCommunity/UpdateCommunity.jsx';
 import UpdateCommunity from './Componants/Dashboard/UpdateCommunity/UpdateCommunity.jsx';
+import { ToastContainer } from 'react-toastify';
 
 export default function App() {
 
 
   let routers = createBrowserRouter([
     { index: true, element: <Signin /> },
-    { path: '', element: <Signin /> },
+    // { path: '', element: <Signin /> },
     { path: 'signup', element: <Signup /> },
     { path: 'forgotpassword', element: <ForgotPassword /> },
     { path: 'newpassword', element: <NewPassword /> },
-
     {
       path: '/', element: <ProtectedRouter> <Layout /></ProtectedRouter>, children: [
         { path: 'communities', element: <Communities /> },
@@ -47,7 +46,7 @@ export default function App() {
       ]
     },
     {
-      path: 'dashboard', element: <Dashboard />, children: [
+      path: 'dashboard', element: <ProtectedRouter1><Dashboard /></ProtectedRouter1>, children: [
         { path: '', element: <AdminCommunities /> },
         { path: 'communities', element: <AdminCommunities /> },
         { path: 'communities/:_id', element: <AdminCommunity /> },
@@ -56,21 +55,34 @@ export default function App() {
         { path: 'admins', element: <Admins /> },
         { path: 'settings', element: <AdminSetting /> },
         { path: 'communities/updatecommunity/:_id', element: <UpdateCommunity /> },
-        //     { path: '*', element: <NotFound /> }
+        // { path: '*', element: <NotFound /> }
       ]
     },
     { path: '*', element: <NotFound /> }
   ])
 
   return (
+    <>
 
-    <UserProvider>
-      <RoleProvider>
-        <EmailProvider>
-          <RouterProvider router={routers} />
-        </EmailProvider>
-      </RoleProvider>
-    </UserProvider>
+      <UserProvider>
+        <RoleProvider>
+          <EmailProvider>
+            <RouterProvider router={routers} />
+          </EmailProvider>
+        </RoleProvider>
+      </UserProvider>
 
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
   )
 }

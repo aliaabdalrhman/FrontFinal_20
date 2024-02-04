@@ -31,51 +31,22 @@ export default function CreateCommunity() {
     initialValues,
     onSubmit: sendData
   });
-
   async function sendData(values) {
     const formData = new FormData();
     formData.append('community_name', values.community_name);
     formData.append('description', values.description);
     formData.append('image', values.image);
     try {
-      const { data } = await axios.post('https://abr-dcxu.onrender.com/community/createCommunity', formData);
-      if (data.message = 'success') {
+      const { data } = await axios.post('http://localhost:3700/community/createCommunity', formData);
+      if (data.message == 'Community created successfully') {
         setError('')
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "The community was successfully created",
-          showConfirmButton: false,
-          timer: 1500,
-          willOpen: () => {
-            Swal.getPopup().style.zIndex = 10000; // تعيين قيمة z-index عالية هنا
-          }
-
-        });
-        // Swal.fire({
-        //   title: "Good job!",
-        //   text: "The community was successfully created",
-        //   icon: "success",
-        //   willOpen: () => {
-        //     Swal.getPopup().style.zIndex = 10000; // تعيين قيمة z-index عالية هنا
-        //   }
-        // });
-        // toast.success('successfully created community', {
-        //   position: 'top-center',
-        //   autoClose: true,
-        //   hideProgressBar: false,
-        //   closeOnClick: true,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: true,
-        //   theme: 'dark'
-        // });
+        toast.success('The community was successfully created')
         console.log(data.newCommunity);
       }
     }
-
     catch (error) {
-      console.log(error.response.data.message)
+      toast.error(error.response.data.message)
+
       setError(error.response.data.message);
     }
   };
@@ -103,7 +74,7 @@ export default function CreateCommunity() {
                   <p>Image uploaded</p>
                 </div>
               ) : (
-                <div >
+                <div>
                   <Avatar sx={{ width: 280, height: 280, mr: 3, ml: 7 }} variant="square">
                     Add Community Image
                   </Avatar>
@@ -139,7 +110,7 @@ export default function CreateCommunity() {
             <div className={`d-flex ${style.sendd}`}>
               <div>
                 <Button type='submit' variant="contained" className={`button  ${style.send}`} >
-                  send data
+                  Create Community
                 </Button>
               </div>
             </div>

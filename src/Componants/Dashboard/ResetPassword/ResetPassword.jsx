@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { toast } from 'react-toastify';
 
 export default function ResetPassword({ email }) {
   const [open, setOpen] = useState(false);
@@ -27,12 +28,14 @@ export default function ResetPassword({ email }) {
 
   async function resetPassword(values) {
     try {
-      let { data } = await axios.post(`https://abr-dcxu.onrender.com/admins/recoverPassword/${email}`, values)
-      console.log(data.msg)
+      let { data } = await axios.post(`http://localhost:3700/admins/recoverPassword/${email}`, values)
+      // console.log(data.msg)
+      toast.success('the password was successfully Changed')
       formik.resetForm()
 
     }
     catch (error) {
+      toast.error('error occurred during the changing of the password')
       console.log(error)
     }
   }

@@ -13,7 +13,6 @@ export default function Signup() {
   let [statusError, setStatusError] = useState(' ');
   let navigate = useNavigate();
 
-  // const [fadeOut, setFadeOut] = useState(false);
 
   let formik = useFormik({
     initialValues: {
@@ -22,13 +21,12 @@ export default function Signup() {
       email: '',
       password: '',
     },
-    // validationSchema: SignUpSchema,
     onSubmit: sendSignUpData,
   })
 
   async function sendSignUpData(values) {
 
-    let { data } = await axios.post('https://abr-dcxu.onrender.com/auth/signup', values)
+    let { data } = await axios.post('http://localhost:3700/auth/signup', values)
       .catch((err) => {
         console.log(err)
         setStatusError(err.response.data.error);
@@ -54,14 +52,15 @@ export default function Signup() {
       <div className={`d-flex  ${style.signup}`}>
         <div className={`d-flex justify-content-center align-items-center ${style.asideR}`} >
           <div>
-            <div className="d-flex justify-content-center mb-5">
-              <i className="fa-regular fa-star" style={{ fontSize: 80 }}></i>
+            <div className=" mb-5">
+              <div className=''><img src="Images/Logo1.png" className='' />
+                <p className={`font ms-2 ${style.logoName}`}>CommuNet</p>
+              </div>
             </div>
-            <div className="d-flex justify-content-center mb-4 ">
-              <h1>Hello, Again !</h1>
-            </div>
+
             <div className="d-flex justify-content-center mb-4 ">
               <Typography className='font w-75 text-capitalize'>
+  
                 to keep conntact with us login with Your personal information.
               </Typography>
             </div>
@@ -80,7 +79,7 @@ export default function Signup() {
           <form onSubmit={formik.handleSubmit}>
             <div className="form-content">
               <div className="d-flex justify-content-center ">
-                <h2 className='mb-5'>Sign up to ABR </h2>
+                <h2 className='mb-5'>Sign up </h2>
               </div>
 
               <div className='d-flex justify-content-between'>

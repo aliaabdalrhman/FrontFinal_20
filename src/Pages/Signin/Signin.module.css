@@ -13,6 +13,11 @@ body {
 
 }
 
+.logoName {
+    font-size: 29px;
+    margin-top: 30px;
+}
+
 .icons i {
     width: 30px;
     height: 30px;
@@ -77,12 +82,15 @@ body {
 .signinbtn {
     width: 130px;
     border-radius: 20px !important;
+    
 }
 
 .signupbtn {
     width: 130px;
     border: 1px solid #ffffffdf !important;
     border-radius: 20px !important;
+    background-color: #fff !important;
+    color: #156ac0 !important;
 }
 
 

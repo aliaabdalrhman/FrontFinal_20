@@ -8,6 +8,9 @@ import UserList from './UserList';
 import Message from './Message';
 import { InputText } from "primereact/inputtext";
 import axios from 'axios';
+import { format } from 'date-fns';
+import { useFormik } from 'formik';
+import { toast } from 'react-toastify';
 
 export default function Post({ communityname }) {
 
@@ -21,384 +24,329 @@ export default function Post({ communityname }) {
     };
     const [showNewBox, setShowNewBox] = useState(false);
 
-    const handleBoxClick = () => {
-        setShowNewBox(!showNewBox);
-    };
     const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
+    let [posts, setPosts] = useState([]);
+    async function getPosts() {
+        try {
+            let { data } = await axios.get(`http://localhost:3700/communities/${communityname}/viewPosts`);
+            setPosts(data);
+            const initialCommentsState = {};
+            const initialNewCommentsState = {};
+            data.forEach((post) => {
+                initialCommentsState[post.post._id] = false;
+                initialNewCommentsState[post.post._id] = '';
+            });
+            setCommentsMap(initialCommentsState);
+            setNewComments(initialNewCommentsState);
+        } catch (error) {
+            console.log('error:', error);
+        }
+    }
 
+    const [image, setImage] = useState({});
+    const [myId, setMyId] = useState('')
+    async function getUserInfo() {
+        try {
+            let { data } = await axios.get(`http://localhost:3700/userDo/${localStorage.getItem('email')}/viewMyPersonalInformation`);
+            { data.image == null ? setImage(null) : setImage(data.image.secure_url) }
+            setMyId(data._id);
+        }
+        catch (error) {
+            console.log('error:', error);
+        }
+    }
+    const [commentsMap, setCommentsMap] = useState({}); // Map to store comments for each post
+    const [newComments, setNewComments] = useState({});
+
+    const handleToggleComments = (postId) => {
+        setCommentsMap((prevCommentsMap) => ({
+            ...prevCommentsMap,
+            [postId]: !prevCommentsMap[postId],
+        }));
+    };
+    const handleCommentInputChange = (postId, value) => {
+        setNewComments((prevNewComments) => ({
+            ...prevNewComments,
+            [postId]: value,
+        }));
+    };
+    const [CommentSubmitting, setCommentSubmitting] = useState(false);
+    const handleCommentSubmit = async (communityName, userEmail, postId) => {
+
+        try {
+            const inputValue = newComments[postId];
+            if (inputValue.trim() !== '') {
+                // Set loading state while sending the comment
+                setCommentSubmitting(true);
+
+                // Send comment to the server and update the comments for the specific post
+                const { data } = await axios.post(`http://localhost:3700/comments/${communityName}/${postId}/${userEmail}/createComment`, { content: inputValue });
+                if (data.msg == 'this comment created successfully') {
+                    toast.success('comment created successfully');
+                }
+                getPosts();
+                // Reset the input value for the specific post
+                setNewComments((prevNewComments) => ({
+                    ...prevNewComments,
+                    [postId]: '',
+                }))
+
+                // Clear loading state
+                setCommentSubmitting(false);
+            }
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            // Clear loading state
+            setCommentSubmitting(false);
+        }
+    };
     const [isLiked, setIsLiked] = useState(false);
-    const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-    // const [postComments, setPostComments] = useState(comments);
-    const handleLikeClick = () => {
-        setIsLiked(!isLiked);
-    };
-    const handleToggleComments = () => {
-        setIsCommentsOpen(!isCommentsOpen);
-    };
-
-    const handleCommentSubmit = () => {
-        if (newComment.trim() !== '') {
-            setComments([...comments, newComment]);
-            setNewComment('');
+    const [likesCount, setLikesCount] = useState(0);
+    const handleLikeClick = async (postId) => {
+        try {
+            // Replace 'your-api-endpoint' with the actual endpoint of your API
+            const response = await axios.post(`http://localhost:3700/userDo/${postId}/like/${myId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+            );
+            console.log(response.data);
+            if (response.status === 200) {
+                setIsLiked(true);
+                setLikesCount(likesCount + 1);
+                getPosts();
+            } else {
+                console.error('Failed to like the post');
+            }
+        } catch (error) {
+            console.error('Error liking the post', error);
         }
     };
 
     const [selectedUser, setSelectedUser] = useState(null);
-
     const [select, setSelect] = useState(true);
-
     const handleUserClick = (user) => {
         setSelectedUser(user);
         setSelect(!select);
     };
 
     const users = [
-        { id: 1, name: 'Batool Saleh' },
+        // { id: 1, name: 'Batool Saleh' },
         { id: 2, name: 'Raghad Suwan' },
-        { id: 3, name: 'Shaimaa Mukahal' },
-        { id: 4, name: 'Raghad Yaseen' },
+        // { id: 3, name: 'Shaimaa Mukahal' },
+        // { id: 4, name: 'Raghad Yaseen' },
     ];
-    let [posts, setPosts] = useState([]);
-
-    async function getPosts(communityname) {
-        try {
-            let { data } = await axios.get(`https://abr-dcxu.onrender.com/communities/${communityname}/viewPosts`);
-            console.log(data);
-            setPosts(data);
-        }
-        catch (error) {
-            console.log('error:', error);
-        }
-    }
+    const [postShowNewBox, setPostShowNewBox] = useState({});
+    const handleBoxClick = (postId) => {
+        setPostShowNewBox((prev) => ({
+            ...prev,
+            [postId]: !prev[postId],
+        }));
+    };
 
     useEffect(() => {
-        // getPosts(communityname);
-
+        getUserInfo();
+        getPosts();
+        console.log(posts)
     }, [])
-
-
 
     return (
 
         <Box  >
-            {/* <Card variant="outlined " className={`shadow-sm ${style.card}`} >
-                <CardContent>
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar src='img/image1.jpg' alt='' />
-                        <div style={{ marginLeft: '10px' }}>
-                            <div className='d-flex'>
-                                <Typography variant="h6" className='me-2'>Alia Abdalrhman</Typography>
-                                <Typography className='mt-1'> is exposed this product</Typography>
-                            </div>
-                            <Typography variant="subtitle2" color="textSecondary">
-                                10:30 Am 25.Oct.2023
-                            </Typography>
-                        </div>
-                    </Box>
-                    <Box style={{ display: 'flex', alignItems: 'center', marginTop: '15px' }}>
-                        <Box className={` ms-2  ${style.content}`} >
-                            <h3 className={`mb-3 ${style.Title}`}>iPhone 13 Pro Max </h3>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>Brand:</p>
-                                <p className={`${style.info}`}>
-                                    iPhone
-                                </p>
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>CPU:</p>
-                                <p className={`${style.info}`}>Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                                </p>
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>RAM:</p>
-                                <p className={`${style.info}`}>
-                                    256GB
-                                </p >
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>Internal Storage:</p>
-                                <p className={`${style.info}`} > 6GB</p>
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>Resolution:</p>
-                                <p className={`${style.info}`}>
-                                    2712*1220
-                                </p>
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>size:</p>
-                                <p className={`${style.info}`}>
-                                    (272*120)
-                                </p >
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>Color:</p>
-                                <p className={`${style.info}`}>
-                                    Gold
-                                </p>
-                            </div>
-                            <div className="d-flex  mb-2">
-                                <p className={`${style.title}`}>Note:</p>
-                                <p className={`${style.info}`}>
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing.                                       </p >
-                            </div>
-                        </Box>
-                        <Box className={`w-50 ms-2 ${style.Slider}`} >
-                            <Slider {...settings}>
-                                <div className="col-md-4 text-center d-flex justify-content-center w-100" >
-                                    <div >
-                                        <img className={`${style.img}`} src='images/iphone.jpeg' alt='this is image' />
-                                    </div>
-                                </div>
-                                <div className="col-md-4 text-center d-flex justify-content-center" >
-                                    <div  >
-                                        <img className={`${style.img}`} src='images/iphone1.jpeg' alt='this is image' />
-                                    </div>
-                                </div>
-                                <div className="col-md-4 text-center d-flex justify-content-center" >
-                                    <div  >
-                                        <img className={`${style.img}`} src='images/iphone2.jpeg' alt='this is image' />
-                                    </div>
-                                </div>
-                            </Slider>
-                        </Box>
-                    </Box>
-                </CardContent>
-                <Box sx={{ borderTop: '1px solid #0000002c' }} >
-                    <CardActions className='d-flex justify-content-center ' >
-                        <Box sx={{ borderRight: '1px solid #0000002c', width: '50%' }} className='d-flex justify-content-center text-center ' >
-                            <i className="fa-regular fa-thumbs-up" style={{ fontSize: 22, marginLeft: '10px', marginRight: '5px' }} />
-                            <Typography variant="" className='me-2' color="textSecondary">
-                                34 Likes
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '50%' }} className='d-flex justify-content-center text-center '>
-                            <i class="fa-regular fa-comment" style={{ fontSize: 22, marginLeft: '10px', marginRight: '5px' }}></i>
-                            <Typography variant="" className='me-2' color="textSecondary">
-                                20 Comments
-                            </Typography>
-                        </Box>
-
-                    </CardActions>
-                </Box>
-                <Collapse in={isCommentsOpen}>
-                    <CardContent sx={{ borderTop: '1px solid #0000002c' }} >
-                        <Box style={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar src='images/myphoto.jpg' alt='' fullWidth />
-                            <Box sx={{ mt: 1, mb: 1 }} style={{ marginLeft: '10px' }}>
-                                <Typography variant="h7">Raghad Suwan </Typography>
-                                <Typography variant="subtitle2" color="textSecondary">
-                                    <p> comment ,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo, laboriosam!</p>
-                                </Typography>
-                            </Box>
-                        </Box>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar src='images/myphoto.jpg' alt='' fullWidth />
-                            <Box style={{ marginLeft: '10px' }}>
-                                <Typography variant="h7">Batool Saleh</Typography>
-                                <Typography variant="subtitle2" color="textSecondary">
-                                    <p> comment ,Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo, laboriosam!</p>
-                                </Typography>
-                            </Box>
-                        </div>
-                    </CardContent>
-                    <CardContent>
-                        <Box style={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar src='img/image1.jpg' className='me-2' alt='' fullWidth />
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={1}
-                                placeholder="Add a comment..."
-                                // value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                            />
-                        </Box>
-                        <Button
-                            variant="outlined"
-                            onClick={handleCommentSubmit}
-                            style={{ marginTop: '10px' }}
-                            className='button ms-5'
-                        >
-                            Comment <SendIcon className='ms-2' />
-                        </Button>
-                    </CardContent>
-                </Collapse>
-            </Card> */}
-
-            <Box className='d-flex justify-content-center'>
-                <Card variant="outlined " className={`shadow-sm ${style.card}`} >
-
-                    {/* {posts.map((post) => */}
-                        <Box sx={{ p: 1 }}>
+            {posts.map((post, index) =>
+                <Box className='d-flex justify-content-center' key={index}>
+                    <Card variant="outlined " className={`shadow-sm ${style.card}`} >
+                        <Box sx={{ p: 1 }} >
                             <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                <Avatar className='border' src='img/image1.jpg' alt='' />
+                                {post.post.userImage == null ? <Avatar className='border' alt='' /> : <Avatar src={post.post.userImage.secure_url} className='border' alt='' />}
                                 <div style={{ marginLeft: '10px' }}>
                                     <div className='d-flex'>
-                                        <Typography v0ariant="h6" className='font me-2 m-1 '>Alia abdalrhman</Typography>
-                                        <Typography className='font mt-1'> is exposed this product</Typography>
+                                        <Typography variant="h6" className='font me-2 mt-1 '>{post.post && post.post.user_name ? post.post.user_name : 'Unknown User'}
+                                        </Typography>
+                                        <Typography className='font mt-2'> {post.post.post_type == 'owner' ? 'is display this product' : 'is requests this product'}</Typography>
                                     </div>
                                     <Typography variant="subtitle2" color="textSecondary" className='font'>
-                                        10:30 Am   25.Oct.2023
+                                        {post.post.createdAt && format(new Date(post.post.createdAt), 'dd-MM-yyyy')}
                                     </Typography>
                                 </div>
                             </Box>
-                            <Box style={{ display: 'flex', alignItems: 'center', marginTop: '15px' }}>
+                            <Box sx={{ mt: 2 }} style={{ display: 'flex' }}>
                                 <Box className={` ms-2  ${style.content}`} >
-                                    <p className={`mb-3 ${style.Title}`}>iPhone 11 Pro </p>
-                                    <div className="d-flex  mb-2">
-                                        <p className={`${style.title}`}>Brand:</p>
-                                        <p className={`${style.info}`}>
-                                            iPhone
-                                        </p>
-                                    </div>
-                                    <div className="d-flex  mb-2">
-                                        <p className={`${style.title}`}>CPU:</p>
-                                        <p className={`${style.info}`}>Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                                        </p>
-                                    </div>
-                                    <div className="d-flex  mb-2">
-                                        <p className={`${style.title}`}>RAM:</p>
-                                        <p className={`${style.info}`}>
-                                            256GB
-                                        </p >
-                                    </div>
-                                    <div className="d-flex  mb-2">
-                                        <p className={`${style.title}`}>Internal Storage:</p>
-                                        <p className={`${style.info}`} > 6GB</p>
-                                    </div>
-                                    <div className="d-flex  mb-2">
-                                        <p className={`${style.title}`}>Color:</p>
-                                        <p className={`${style.info}`}>
-                                            Black
-                                        </p>
-                                    </div>
-                                    <div className="d-flex ">
-                                        <p className={`${style.title}`}>Note:</p>
-                                        <p className={`${style.info}`}>
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit?
-                                        </p >
-                                    </div>
+                                    {post.post.properties.map((property, propertyIndex) =>
+                                        <>
+                                            <div>
+                                                {property.property == 'Name' ? <p className={`${style.title1}`}>{property.value} </p> : ''}
+                                            </div>
+                                            <div>
+                                                <div className="d-flex  mb-4" key={propertyIndex}>
+                                                    {property.property !== 'Name' ? <>
+                                                        <p className={`${style.title}`}>{property.property} :</p>
+                                                        <p className={`${style.info}`}>{property.value} </p>
+                                                    </> : ''}
 
-                                    <Typography color="textSecondary" sx={{ fontSize: '13px' }} className='font'>
-                                        20 like ,  30 comment
-                                    </Typography>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </Box>
-                                {/* <Box className={`w-50 ${style.Slid}`} > */}
-                                <Slider className={`w-50 ${style.Slid}`} {...settings}>
-                                    <div className=" text-center d-flex justify-content-center " >
-                                        <img className={`${style.img}`} src='images/iphone3.jpeg' alt='this is image' />
-                                    </div>
-                                    <div className=" text-center d-flex justify-content-center" >
-                                        <img className={`${style.img}`} src='images/iphone4.jpeg' alt='this is image' />
-                                    </div>
-                                    <div className=" text-center d-flex justify-content-center" >
-                                        <img className={`${style.img}`} src='images/iphone5.jpeg' alt='this is image' />
-                                    </div>
-                                </Slider>
-                                {/* </Box> */}
+                                <Box className={`w-100 ${style.Slid}`} >
+                                    <Slider className={`w-50`} {...settings}>
+                                        {post.post.Images.map((image) =>
+                                            <div className=" text-center d-flex justify-content-center " >
+                                                {image == null ? <img className={`${style.img}`}></img> : <img src={image.secure_url} className={`${style.img}`}></img>}
+                                            </div>)}
+                                    </Slider>
+                                </Box>
                             </Box>
                         </Box>
-                    {/* )} */}
-                    <Box sx={{ borderTop: '1px solid #0000002c' }} className={`d-flex justify-content-center  ${style.action}`} >
-                        <Box sx={{ borderRight: '1px solid #0000002c', width: '33.33%', cursor: 'pointer' }}
-                            onClick={handleLikeClick}
-                            className={`d-flex justify-content-center text-center p-2 ${style.action1}`}>
-                            {isLiked ? <i className="fa-solid fa-thumbs-up" style={{ color: '#156ac0', fontSize: 25, marginLeft: '10px', marginRight: '5px' }}></i> : <i className="fa-regular fa-thumbs-up" style={{ fontSize: 25, color: '#918d99', marginLeft: '10px', marginRight: '5px' }}></i>}
-                            <Typography variant="" sx={{ fontSize: '16px', mr: 2 }} color="textSecondary" className='font'>
-                                Likes
-                            </Typography>
+                        <Typography color="textSecondary" sx={{ fontSize: '13px', ml: 2, mb: 1 }} className='font'>
+                            {post.likesNumber} like ,  {post.commentsNumber} comment
+                        </Typography>
+                        <Box sx={{ borderTop: '1px solid #0000002c' }} className={`d-flex justify-content-center  ${style.action}`} >
+                            <Box
+                                sx={{ borderRight: '1px solid #0000002c', width: '33.33%', cursor: 'pointer' }}
+                                className={`d-flex justify-content-center text-center p-2 ${style.action1}`}
+                            >
+                                {post.likesInfo.some(like => like.userId === myId) ? (
+                                    <i
+                                        className={`fa-solid fa-thumbs-up`}
+                                        style={{
+                                            color: '#156ac0',
+                                            fontSize: 25,
+                                            marginLeft: '10px',
+                                            marginRight: '5px',
+                                        }}
+                                        onClick={() => handleLikeClick(post.postId)}
+                                    ></i>
+                                ) : (
+                                    <i
+                                        className={`fa-regular fa-thumbs-up`}
+                                        style={{
+                                            color: '#918d99',
+                                            fontSize: 25,
+                                            marginLeft: '10px',
+                                            marginRight: '5px',
+                                        }}
+                                        onClick={() => handleLikeClick(post.postId)}
+                                    ></i>
+                                )}
+                                <Typography variant="" sx={{ fontSize: '16px', mr: 2 }} color="textSecondary" className='font'>
+                                    Likes
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{ borderRight: '1px solid #0000002c', width: '33.33%', cursor: 'pointer' }}
+                                onClick={() => handleToggleComments(post.post._id)}
+                                className={`d-flex justify-content-center text-center p-2 ${style.action1}`}
+                            >
+                                <i className="fa-regular fa-comment" style={{ fontSize: 25, color: '#918d99', marginLeft: '10px', marginRight: '5px' }}></i>
+                                <Typography variant="" sx={{ fontSize: '16px' }} color="textSecondary" className='font'>
+                                    Comment
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{ width: '33.33%', cursor: 'pointer' }}
+                                className={`d-flex justify-content-center text-center p-2 ${style.action1}`}
+                                onClick={() => handleBoxClick(post.post._id)}                            >
+                                <i className="fa-regular fa-message" style={{ fontSize: 25, marginLeft: '10px', color: '#918d99', marginRight: '5px' }}></i>
+                                <Typography variant="" sx={{ fontSize: '16px', mr: 2 }} color="textSecondary" className='font'>
+                                    Message
+                                </Typography>
+                            </Box>
                         </Box>
-                        <Box sx={{ borderRight: '1px solid #0000002c', width: '33.33%', cursor: 'pointer' }}
-                            onClick={handleToggleComments}
-                            className={`d-flex justify-content-center text-center p-2 ${style.action1}`}>
-
-                            <i className="fa-regular fa-comment" style={{ fontSize: 25, color: '#918d99', marginLeft: '10px', marginRight: '5px' }}></i>
-                            <Typography variant="" sx={{ fontSize: '16px' }} color="textSecondary" className='font'>
-                                Comment
-                            </Typography>
-                        </Box>
-                        <Box sx={{ width: '33.33%', cursor: 'pointer' }}
-                            className={`d-flex justify-content-center text-center p-2 ${style.action1}`}
-                            onClick={handleBoxClick}
-                        >
-                            <i className="fa-regular fa-message" style={{ fontSize: 25, marginLeft: '10px', color: '#918d99', marginRight: '5px' }}></i>
-                            <Typography variant="" sx={{ fontSize: '16px', mr: 2 }} color="textSecondary" className='font'>
-                                Message
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Collapse in={isCommentsOpen}>
-                        <Box sx={{ borderTop: '1px solid #0000002c', maxHeight: 170, height: 'auto', overflow: 'auto' }} >
-                            {comments.map((comment, index) => (
-                                <div key={index}>
-                                    <Box className='d-flex alignItems-center mt-3 '>
-                                        <Avatar src='img/image1.jpg' sx={{ mt: 1, ml: 1 }} alt='' fullWidth />
-                                        <Box sx={{ ml: 1 }} className={`${style.commentcontent}`} >
-                                            <Typography variant="h7" className='font'>Alia abdalrhman</Typography>
-                                            <Typography variant="subtitle2" style={{ fontSize: '15px' }} className='font'>
-                                                {comment}
-                                            </Typography>
+                        <Collapse in={commentsMap[post.post._id] || false}>
+                            <Box sx={{ borderTop: '1px solid #0000002c', maxHeight: 170, height: 'auto', overflow: 'auto' }} >
+                                {post.comments.map((comment, commentIndex) => (
+                                    <div key={commentIndex}>
+                                        <Box className='d-flex alignItems-center mt-3'>
+                                            {comment.userImage == null ? <Avatar sx={{ ml: 1 }} alt='' fullWidth /> : <Avatar
+                                                src={comment.userImage.secure_url}
+                                                sx={{ ml: 1 }} alt='' fullWidth />}
+                                            <Box sx={{ ml: 1 }} className={`${style.commentcontent}`}>
+                                                <p className={`font ${style.commentUser}`}>
+                                                    {comment.user_name}
+                                                </p>
+                                                <p variant="h6" style={{ fontSize: '15px' }} className='font'>
+                                                    {comment.content}
+                                                </p>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                </div>
-                            ))}
-                        </Box>
-                        <CardContent>
-                            <Box className='d-flex align-items-center'>
-                                <Avatar src='img/image1.jpg' className='border me-2' alt='' fullWidth />
-                                <InputText id="msg" type='text' placeholder='Add a comment...' onChange={(e) => setNewComment(e.target.value)} className={` w-100 ${style.sendmsg}`} value={newComment} />
-                                <SendIcon className='ms-2 ' onClick={handleCommentSubmit} style={{ cursor: 'pointer', fontSize: '30px', color: '#156ac0' }} />
-                            </Box>
-                        </CardContent>
-                    </Collapse>
-
-                </Card>
-                {showNewBox && (
-                    <Box sx={{ mt: 1 }} >
-                        <Card className={`shadow-sm  ${style.msgCard}`} sx={{ maxHeight: 500, height: 500, overflow: 'auto' }}  >
-                            <>
-                                {select ? <>
-                                    <Box sx={{ borderBottom: '1px solid #0000002c' }} className='d-flex justify-content-center gap-4'>
-                                        <Typography variant='h6' sx={{ mt: 1, ml: 13 }} className='font'>
-                                            Chats(4)
-                                        </Typography>
-                                        <Button
-                                            variant="contained"
-                                            size='small'
-                                            onClick={handleCommentSubmit}
-                                            className={`font button mb-2 mt-2 ${style.outofstack} `} >
-                                            Out Of Stack
-                                        </Button>
-                                    </Box>
-                                    <div>
-                                        <div>
-                                            <UserList
-                                                users={users}
-                                                selectedUser={selectedUser}
-                                                onUserClick={handleUserClick}
-                                            />
-                                        </div>
+                                        {comment.createdAt && (
+                                            <p className={style.date}>
+                                                {format(new Date(comment.createdAt), 'dd-MM-yyyy')}
+                                            </p>
+                                        )}
                                     </div>
-                                </>
-                                    : <>
-                                        <div >
-                                            {selectedUser && (
-                                                <>
-                                                    <Message select={select} setSelect={setSelect} selectedUser={selectedUser} />
-                                                </>
-                                            )}
+                                ))}
+                            </Box>
+                            <CardContent>
+                                <Box className='d-flex align-items-center'>
+                                    <Avatar src={image} className='border me-2' alt='' fullWidth />
+                                    <InputText
+                                        id={`content-${post.post._id}`}
+                                        type='text'
+                                        placeholder='Add a comment...'
+                                        className={` w-100 ${style.sendmsg}`}
+                                        value={newComments[post.post._id]}
+                                        onChange={(e) => handleCommentInputChange(post.post._id, e.target.value)}
+                                        name={`content-${post.post._id}`}
+                                    />
+                                    <SendIcon
+                                        className='ms-2 '
+                                        type='submit'
+                                        onClick={() => handleCommentSubmit(post.post.community_name, localStorage.getItem('email'), post.post._id)}
+                                        style={{ cursor: 'pointer', fontSize: '30px', color: '#156ac0' }}
+                                    />
+                                </Box>
+                            </CardContent>
+                        </Collapse>
+                    </Card>
+                    {postShowNewBox[post.post._id] && (
+                        <Box sx={{ mt: 2, mb: 2 }} >
+                            <Card className={`shadow-sm  ${style.msgCard}`} sx={{ maxHeight: 500, height: 406, overflow: 'auto' }}  >
+                                <>
+                                    {select ? <>
+                                        <Box sx={{ borderBottom: '1px solid #0000002c' }} className='d-flex justify-content-center gap-4'>
+                                            <Typography variant='h6' sx={{ mt: 1, ml: 13 }} className='font'>
+                                                Chats(4)
+                                            </Typography>
+                                            <Button
+                                                variant="contained"
+                                                size='small'
+                                                onClick={handleCommentSubmit}
+                                                className={`font button mb-2 mt-2 ${style.outofstack} `} >
+                                                Out Of Stack
+                                            </Button>
+                                        </Box>
+                                        <div>
+                                            <div>
+                                                <UserList
+                                                    users={users}
+                                                    selectedUser={selectedUser}
+                                                    onUserClick={handleUserClick}
+                                                />
+                                            </div>
                                         </div>
                                     </>
-                                }
-                            </>
-                        </Card>
+                                        : <>
+                                            <div >
+                                                {selectedUser && (
+                                                    <>
+                                                        <Message select={select} setSelect={setSelect} selectedUser={selectedUser} />
+                                                    </>
+                                                )}
+                                            </div>
+                                        </>
+                                    }
+                                </>
+                            </Card>
 
-                    </Box>
-                )}
-            </Box >
+                        </Box>
+                    )}
+                </Box >
+            )}
+
         </Box >
-
     )
 }

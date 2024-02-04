@@ -21,8 +21,7 @@ export default function Communities() {
 
   async function getCommunities() {
     try {
-      let { data } = await axios.get('https://abr-dcxu.onrender.com/community/getCommunities');
-      // console.log(data.communities)
+      let { data } = await axios.get(`http://localhost:3700/community/${localStorage.getItem('email')}/getCommunities`);
       setCommunities(data.communities);
     }
     catch (error) {
@@ -30,23 +29,13 @@ export default function Communities() {
     }
   }
 
-
   const handleDeleteCommunity = (community_name) => {
     const confirmDelete = () => {
       if (window.confirm('are you sure to delete this community ?')) {
-        const apiUrl = `https://abr-dcxu.onrender.com/community/${community_name}/deleteCommunity`;
+        const apiUrl = `http://localhost:3700/community/${community_name}/deleteCommunity`;
         axios.delete(apiUrl, { data: { community_name: community_name } })
           .then(response => {
-            toast.success('successfully deleted community', {
-              position: 'top-center',
-              autoClose: false,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: true,
-              theme: 'dark'
-            });
+            toast.success('successfully deleted community')
             getCommunities(); // إعادة تحميل قائمة المستخدمين بعد الحذف
           })
           .catch(error => {
@@ -93,11 +82,15 @@ export default function Communities() {
             {communities.map((community) =>
               <Link to={`${community._id}`} key={community._id} state={{ id: community._id }}>
                 <Card className={`${style.card}`} key={community._id} >
-                  <Link to='/dashboard/communities'>
-                    <i className={`fa-solid fa-trash ${style.delete}`} onClick={() => handleDeleteCommunity(community.community_name)}></i></Link>
-                  <Link to={{ pathname: `updatecommunity/${community._id}`, state: { community: community } }}>
-                    <i className={`fa-solid fa-pen-to-square ${style.update}`}></i>
-                  </Link>
+                  {role == 'SuperAdmin' ?
+                    <> <Link to='/dashboard/communities'>
+                      <i className={`fa-solid fa-trash ${style.delete}`}  onClick={() => handleDeleteCommunity(community.community_name)}></i>
+                    </Link>
+                      <Link to={{ pathname: `updatecommunity/${community._id}`, state: { community: community } }}>
+                        <i className={`fa-solid fa-pen-to-square ${style.update}`}></i>
+                      </Link>
+                    </>
+                    : <> </>}
                   <h1 >{community.community_name}
                     <p className={style.desc}>{community.description}</p>
                   </h1>

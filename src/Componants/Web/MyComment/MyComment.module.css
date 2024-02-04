@@ -5,8 +5,7 @@
     width: 63%;
     max-height: none;
     margin-bottom: 10px;
-    /* margin-left: 200px; */
-    /* position: relative; */
+
 }
 
 .content {
@@ -41,14 +40,17 @@
     width: 220px;
     margin-left: 10px;
     font-size: 16px;
+
 }
+
 
 .img {
     border-radius: 30px !important;
     min-width: 70%;
-    max-height: 80%;
+    min-height: 80%;
     max-width: 80%;
 }
+
 
 .msgCard {
     scale: .92;
@@ -87,24 +89,24 @@
 }
 
 .commentcontent {
-    padding:0px 12px;
+    padding: 4px;
     border-radius: 15px;
     background-color: #0d0d0d19;
 }
 
 .commentUser {
-    margin-top: 5px;
     font-size: 16px !important;
     font-weight: 600 !important;
 }
-.date{
+
+.date {
     font-size: 12px;
     margin-left: 60px !important;
 }
+
 .msgcontent {
     border: 1px solid #0000002c;
-    background-color: rgba(86, 86, 86, 0.841);
-
+    background-color: #156ac0;
     border-radius: 20px;
     padding: 5px 10px;
     height: fit-content;
@@ -112,9 +114,10 @@
     color: #fff;
 }
 
+
 .msgcontent1 {
     border: 1px solid #0000002c;
-    background-color: #156ac0;
+    background-color: rgba(86, 86, 86, 0.841);
     border-radius: 20px;
     padding: 5px 10px;
     color: #fff;

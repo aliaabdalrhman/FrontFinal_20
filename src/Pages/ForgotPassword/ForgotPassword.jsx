@@ -12,10 +12,7 @@ import { toast } from 'react-toastify';
 
 export default function ForgotPassword() {
     let navigate = useNavigate();
-    // const GoToNewPass = () => {
-    //     navigate('/newpassword')
-    // }
-    const [msg, setMsg] = useState('')
+
     let formik = useFormik({
         initialValues: {
             email: '',
@@ -25,27 +22,28 @@ export default function ForgotPassword() {
 
     async function sendCode(values) {
         try {
-            let { data } = await axios.patch('https://abr-dcxu.onrender.com/auth/sendCode', values);
-            // console.log(data);
+            let { data } = await axios.patch('http://localhost:3700/auth/sendCode', values);
+            console.log(data);
             if (data.message == 'Success') {
                 toast.success("Success !");
                 navigate('/newpassword')
             }
-
         }
         catch (err) {
-            toast.error("error !");
+            toast.error(err);
             console.log(err)
         }
-
     }
-
     return (
         <>
             <div className={`d-flex justify-content-center align-items-center`}>
                 <div className={`d-flex  ${style.reset}`}>
                     <Box className={`d-flex justify-content-center align-items-center ${style.asideR}`} >
-
+                        <div className=" mb-5">
+                            <div className=''><img src="/Images/Logo1.png" className='' />
+                                <p className={`font ms-2 ${style.logoName}`}>CommuNet</p>
+                            </div>
+                        </div>
                     </Box>
                     <Box className={`d-flex justify-content-center align-items-center ${style.asideL}`} >
                         <form onSubmit={formik.handleSubmit}>

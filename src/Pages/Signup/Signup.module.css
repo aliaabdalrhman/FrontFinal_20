@@ -7,7 +7,10 @@
     border-radius: 20px;
     border: 1px solid #156ac0;
 }
-
+.logoName {
+    font-size: 29px;
+    margin-top: 30px;
+}
 .TextField {
     width: 420px;
     border: 1px solid #1976D2 !important;
@@ -80,12 +83,15 @@
 .signinbtn {
     width: 130px;
     border-radius: 20px !important;
+    
 }
 
 .signupbtn {
     width: 130px;
     border: 1px solid #ffffffdf !important;
     border-radius: 20px !important;
+    background-color: #fff !important;
+    color: #156ac0 !important;
 }
 
 .fade-out {
